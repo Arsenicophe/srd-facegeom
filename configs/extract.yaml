@@ -23,3 +23,22 @@ resolutions: [112, 224]
 normalize:
   mean: [0.485, 0.456, 0.406]
   std: [0.229, 0.224, 0.225]
+
+# Extraction (étape 1c).
+extraction:
+  splits: [train, val, test]
+  # Dossier de sortie, relatif à drive_root (configs/data.yaml) :
+  # <output_dir>/<backbone>/<résolution>/<split>.npy
+  output_dir: features
+  # Les images sont traitées par morceaux ; chaque morceau est écrit sur Drive
+  # dès qu'il est fini, et une relance saute les morceaux déjà écrits.
+  chunk_size: 8192
+  batch_size: 128
+  num_workers: 2
+  # Stockage en demi-précision : suffisant pour des similarités cosinus,
+  # divise la place par deux (~0,8 Go par backbone et résolution).
+  storage_dtype: float16
+  # Calcul en float32 par défaut. Passer à true (float16 sur GPU) seulement si
+  # l'essai de l'étape 1d montre que c'est trop lent ; le même réglage vaut
+  # alors pour les deux backbones.
+  amp: false
