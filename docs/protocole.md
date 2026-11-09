@@ -123,6 +123,17 @@ entre parties) : pas besoin du repli.
   risque que le réseau reconnaisse un style plutôt qu'un visage.
 - La taille du carré est fixée **à l'œil**, après inspection d'une dizaine
   d'images, puis consignée ici.
+- **Choix (étape 1a) : carré de 128 px**, boîte (24, 52, 152, 180) dans
+  l'image 178 × 218.
+  - Placement : centre horizontal 88,5 px et yeux à 111,2 px, positions
+    moyennes mesurées sur les repères de CelebA (écart-type 1 à 2 px) ; les yeux
+    sont placés à 46 % de la hauteur du carré, comme dans le gabarit 112 × 112
+    d'ArcFace.
+  - Candidats comparés sur 10 identités de validation : 178, 150, 128, 100 px.
+    178 et 150 gardent trop de coiffure, de fond et de vêtements ; 100 coupe le
+    menton sur plusieurs images. 128 garde le visage du front au menton.
+  - Il reste un peu de cheveux sur les côtés : la planche des plus proches
+    voisins (section 5) contrôlera si le réseau s'en sert.
 
 ### Règles
 
@@ -440,3 +451,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 |---|---|
 | 2026-11-09 | Première version, à partir des décisions prises en séance |
 | 2026-11-09 | Section 3 : résultat de la partition (découpage officiel disjoint, effet du filtre) |
+| 2026-11-09 | Section 3 : recadrage fixé à 128 px après inspection de la planche |

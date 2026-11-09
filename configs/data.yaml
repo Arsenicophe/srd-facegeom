@@ -31,3 +31,25 @@ splits:
   min_images_per_identity: 4
   # Dossier de sortie, relatif à la racine du dépôt (fichiers versionnés).
   output_dir: splits
+
+# Recadrage carré (étape 1a). Voir docs/protocole.md, section 3.
+crop:
+  # Positions moyennes mesurées sur list_landmarks_align_celeba.txt (202 599
+  # images, écart-type 1 à 2 px pour les yeux) : centre horizontal du visage
+  # et hauteur des yeux, en pixels de l'image alignée 178 × 218.
+  center_x: 88.5
+  eye_y: 111.2
+  # Hauteur relative des yeux dans le carré : 0,46, comme le gabarit 112 × 112
+  # d'ArcFace (yeux à y ≈ 51,6). Même placement pour toutes les tailles.
+  eye_rel: 0.46
+  # Tailles de carré candidates (côté en pixels), à comparer à l'œil.
+  candidate_sizes: [178, 150, 128, 100]
+  # Taille retenue après inspection de la planche (2026-11-09) : garde tout le
+  # visage (front au menton), retire l'essentiel de la coiffure et du fond.
+  # Boîte obtenue : (24, 52, 152, 180).
+  size: 128
+  # Planche d'inspection : images de VALIDATION uniquement (jamais le test).
+  sheet:
+    split: val
+    n_images: 10
+    seed: 0
