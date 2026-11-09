@@ -80,6 +80,7 @@ bibliothèques.
 - Pertes via `pytorch-metric-learning`, pas d'implémentation maison.
 - Docstrings en français, noms de symboles en anglais.
 - Linter et tests avant chaque commit.
+- Messages de commit sans ligne « Co-Authored-By » ni mention de Claude.
 
 **Tests prioritaires** : non-recouvrement des identités ; `arcface` avec m = 0
 égale `nsoftmax` ; métriques à 1,0 sur des vecteurs synthétiques séparables ;
