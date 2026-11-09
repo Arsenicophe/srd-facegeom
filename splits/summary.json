@@ -1,0 +1,38 @@
+{
+  "rule": {
+    "source": "list_eval_partition.txt",
+    "min_images_per_identity": 4
+  },
+  "before_filter": {
+    "test": {
+      "identities": 1000,
+      "images": 19962
+    },
+    "train": {
+      "identities": 8192,
+      "images": 162770
+    },
+    "val": {
+      "identities": 985,
+      "images": 19867
+    }
+  },
+  "after_filter": {
+    "test": {
+      "identities": 951,
+      "images": 19850
+    },
+    "train": {
+      "identities": 7689,
+      "images": 161602
+    },
+    "val": {
+      "identities": 924,
+      "images": 19720
+    }
+  },
+  "source_md5": {
+    "identity_CelebA.txt": "32bd1bd63d3c78cd57e08160ec5ed1e2",
+    "list_eval_partition.txt": "d32c9cbf5e040fd4025c592c306e6668"
+  }
+}

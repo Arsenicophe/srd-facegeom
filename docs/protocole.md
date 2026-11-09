@@ -105,6 +105,17 @@ n'utilise aucun visage et ne mesure que la recherche par plus proches voisins.
   exactement les mêmes données.
 - Le nombre d'identités et d'images perdues est consigné et rapporté.
 
+### Résultat (étape 0f, `splits/summary.json`)
+
+Le découpage officiel est bien **disjoint en identités** (0 identité commune
+entre parties) : pas besoin du repli.
+
+| Partie | Avant filtre | Après filtre (≥ 4 photos) |
+|---|---|---|
+| train | 8 192 identités, 162 770 images | **7 689 identités, 161 602 images** |
+| val | 985 identités, 19 867 images | **924 identités, 19 720 images** |
+| test | 1 000 identités, 19 962 images | **951 identités, 19 850 images** |
+
 ### Recadrage
 
 - Recadrage **carré centré sur le visage**, même règle pour toutes les images.
@@ -428,3 +439,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | Date | Modification |
 |---|---|
 | 2026-11-09 | Première version, à partir des décisions prises en séance |
+| 2026-11-09 | Section 3 : résultat de la partition (découpage officiel disjoint, effet du filtre) |

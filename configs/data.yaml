@@ -18,3 +18,16 @@ celeba:
     img_align_celeba.zip: 00d2c5bc6d35e252742224ab0c1e8fcb
     identity_CelebA.txt: 32bd1bd63d3c78cd57e08160ec5ed1e2
     list_eval_partition.txt: d32c9cbf5e040fd4025c592c306e6668
+
+# Partition par identité (étape 0f). Voir docs/protocole.md, section 3.
+splits:
+  # Découpage officiel de CelebA (list_eval_partition.txt) : 0, 1, 2.
+  names:
+    0: train
+    1: val
+    2: test
+  # Les identités avec moins de photos sont retirées de toutes les parties
+  # (lots 8 × 4 pour contrastive et triplet, mêmes données pour les 4 pertes).
+  min_images_per_identity: 4
+  # Dossier de sortie, relatif à la racine du dépôt (fichiers versionnés).
+  output_dir: splits
