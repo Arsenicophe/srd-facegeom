@@ -20,3 +20,11 @@ runs_dir: runs
 bootstrap:
   n: 1000
   seed: 0
+
+# Vérification : toutes les paires « même personne », et un échantillon fixe
+# de paires « personnes différentes » (validé le 2026-11-09). Les mêmes paires
+# servent pour tous les backbones et toutes les pertes (comparaison appariée).
+verification:
+  n_negative: 1000000
+  seed: 0
+  fars: [0.1, 0.01, 0.001]

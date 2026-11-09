@@ -393,8 +393,10 @@ vérification.
 - **TAR à FAR = 10⁻¹, 10⁻², 10⁻³** ;
 - précision au seuil choisi **sur la validation**.
 
-**[à valider]** Paires : toutes les paires positives du test, et un échantillon
-fixe de paires négatives tiré avec une graine fixée (taille à fixer). Les paires
+Paires : toutes les paires positives, et un échantillon fixe de
+**1 000 000 de paires négatives** tirées avec la graine 0 (validé le
+2026-11-09), identiques pour toutes les méthodes. En validation : 229 307 paires
+positives sur 194 millions de négatives possibles. Les paires
 négatives partagent des images, donc elles ne sont pas indépendantes : on en
 affirme moins que leur nombre ne le laisse croire.
 
@@ -503,3 +505,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 4 : chargement vérifié des deux backbones (SHA-256, clés tolérées) |
 | 2026-11-09 | Section 4 : extraction complète sur GPU Apple (Colab sans GPU) |
 | 2026-11-09 | Section 5 : règle de décision de l'étape 2 fixée avant tout calcul ; ACP 128 validée |
+| 2026-11-09 | Section 10 : 1 000 000 de paires négatives, graine 0 |
