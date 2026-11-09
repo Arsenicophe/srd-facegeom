@@ -1,0 +1,22 @@
+# Évaluation et mesures préalables (étape 2). Voir docs/protocole.md, section 5.
+
+# Vecteurs : dossier local (extraction faite sur le Mac). Sur Colab :
+# /content/drive/MyDrive/srd-facegeom/features
+features_root: features
+backbones: [resnet50_sup, resnet50_barlow]
+resolutions: [112, 224]
+
+# Étape 2 : ajustement sur l'entraînement, mesure sur la VALIDATION.
+# Le test n'est jamais lu à cette étape.
+fit_split: train
+eval_split: val
+
+# Dimension commune à la tête, à la LDA et à la version réduite de la mesure brute
+dim: 128
+
+# Résultats : un dossier par passage, jamais écrasé
+runs_dir: runs
+
+bootstrap:
+  n: 1000
+  seed: 0
