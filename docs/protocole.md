@@ -285,6 +285,27 @@ auto-supervisé préserve mieux l'identité que l'objectif supervisé, aussi bie
 en brut qu'après LDA. Reste à contrôler que ce n'est pas un effet de style
 (planche des plus proches voisins, étape 2f).
 
+### Planche des plus proches voisins (étape 2f)
+
+Barlow Twins 224 px, 10 requêtes de validation tirées au hasard (graine 0), 5
+voisins chacune (`runs/20261109-182611_2f_planche_voisins`). Constat visuel,
+anecdotique sur 10 requêtes :
+
+- **Brut (3/50 bons voisins)** : les voisins partagent surtout la **pose**
+  (profil avec profils), le **couvre-chef**, la **couleur et la longueur des
+  cheveux**, l'**éclairage** et le fond. Le brut range d'abord par apparence
+  globale et style.
+- **LDA (16/50)** : nettement plus centré sur le visage ; plusieurs requêtes
+  retrouvent 3 à 5 photos de la bonne personne malgré des poses et éclairages
+  différents. Les erreurs restantes partagent surtout des **traits
+  démographiques** (sexe, âge, origine, barbe) et encore parfois du style
+  (chapeaux, cheveux blonds).
+- Conclusion : la LDA s'appuie bien davantage sur le visage que le brut ; le
+  confondant « style » n'est pas éliminé, il recule. À rapporter tel quel.
+- À surveiller : dans une requête, plusieurs voisins étiquetés « autre
+  personne » ressemblent fortement à la requête. Possibles sosies ou erreurs
+  d'étiquetage de CelebA, non vérifiables ici.
+
 ### Planche des plus proches voisins
 
 Pour une dizaine d'images de validation, afficher les 5 plus proches voisins.
@@ -534,3 +555,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 5 : règle de décision de l'étape 2 fixée avant tout calcul ; ACP 128 validée |
 | 2026-11-09 | Section 10 : 1 000 000 de paires négatives, graine 0 |
 | 2026-11-09 | Section 5 : résultats de l'étape 2 et choix (Barlow Twins, 224 px) |
+| 2026-11-09 | Section 5 : constat de la planche des plus proches voisins |
