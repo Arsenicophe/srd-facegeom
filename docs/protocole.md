@@ -175,7 +175,7 @@ utilisent une autre recette d'entraînement.
   float16. Sur 16 images, écart avec un calcul CPU float32 ≤ 0,0005 (cosinus
   1,000000) : l'appareil n'a pas d'effet. Tous les vecteurs viennent du même
   passage.
-- Durée : 94 min pour 201 172 images (train 70 min, val 12 min, test 12 min).
+- Durée : 94,6 min pour 201 172 images (train 70,4 min, val 12,3 min, test 11,9 min).
 - 12 fichiers (2 backbones × 2 résolutions × 3 parties), 3,1 Go, vérifiés :
   formes, ordre identique aux fichiers `splits/`, aucune valeur non finie.
 - Le test est extrait comme le reste mais **n'est lu par aucun calcul** avant
@@ -251,9 +251,13 @@ Mesure : **MAP@R sur la validation**. « Brute » = version ACP 128.
 
 Les seuils sont des **choix raisonnés, pas des valeurs de la littérature** :
 avec un écart-type supposé d'environ 1,5 point entre graines, une marge totale
-inférieure à 2 points noierait forcément les écarts entre pertes ; chez Musgrave,
-les pertes gagnent environ 10 points de MAP@R sur le réseau brut (CUB200), 5
-points en est la moitié.
+inférieure à 2 points noierait forcément les écarts entre pertes ; 5 points
+correspond à l'ordre de grandeur du gain des pertes sur le réseau brut chez
+Musgrave dans le réglage le plus proche du nôtre (128 dimensions, un seul
+modèle) : de +3,6 à +7,0 points de MAP@R sur CUB200 (tableau 4). *Correction du
+2026-11-09 : une version antérieure de cette phrase citait « environ 10
+points », ce qui ne vaut que pour ses embeddings concaténés à 512 dimensions
+(+8,9 à +12,5 sur CUB200). Les seuils n'ont pas été modifiés.*
 
 La comparaison des deux backbones bruts reste un résultat du rapport, quel que
 soit le choix.
@@ -266,7 +270,7 @@ MAP@R en % (« brut » = ACP 128) :
 |---|---|---|---|---|---|---|
 | supervisé | 112 | 2,31 | 6,07 | 18,2 → 32,0 | 80,5 → 86,6 | 11,2 → 28,0 |
 | supervisé | 224 | 2,83 | 9,42 | 21,1 → 41,5 | 81,2 → 89,2 | 11,2 → 33,4 |
-| Barlow Twins | 112 | 3,30 | 8,46 | 24,9 → 39,8 | 81,4 → 89,2 | 13,9 → 31,8 |
+| Barlow Twins | 112 | 3,30 | 8,46 | 24,9 → 39,7 | 81,4 → 89,2 | 13,9 → 31,8 |
 | Barlow Twins | 224 | 4,01 | **13,23** | 28,5 → 51,5 | 82,6 → 91,6 | 15,8 → 38,4 |
 
 Application de la règle (`runs/20261109-182200_2e_decision/decision.json`) :
@@ -556,3 +560,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 10 : 1 000 000 de paires négatives, graine 0 |
 | 2026-11-09 | Section 5 : résultats de l'étape 2 et choix (Barlow Twins, 224 px) |
 | 2026-11-09 | Section 5 : constat de la planche des plus proches voisins |
+| 2026-11-09 | Vérification avant rédaction : P@1 corrigé (39,7 au lieu de 39,8), durée précisée, justification du seuil de 5 points corrigée (chiffres de Musgrave à 128 dimensions) |

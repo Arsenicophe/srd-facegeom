@@ -2,7 +2,8 @@
 
 Document de référence pour la **synthèse d'avancement (2 pages, en anglais)**.
 Tout ce qui suit est mesuré sur la **validation** ; le test n'a été lu par aucun
-calcul. Le détail du protocole est dans `docs/protocole.md`.
+calcul. **Dans le rapport, ces chiffres doivent être présentés comme des
+résultats de validation**, jamais comme des résultats de test. Le détail du protocole est dans `docs/protocole.md`.
 
 État au 2026-11-09. Prochaine étape : 3, entraînement de la tête avec les 4 pertes.
 
@@ -55,7 +56,7 @@ négatives (graine 0), identiques pour toutes les lignes.
 | **Barlow Twins** | **224** | **LDA** | **13,23** | **51,47** | **19,12** | **91,56** | **16,61** | **74,72** | **38,44** | **17,42** |
 
 Toutes les valeurs en %. Fichiers : `results/etape2/`. Sans ACP (2 048 dimensions),
-le brut est à peine meilleur (+0,1 à +0,3 point de MAP@R) : réduire à 128 ne
+le brut est à peine meilleur (+0,08 à +0,27 point de MAP@R) : réduire à 128 ne
 détruit presque rien.
 
 Repère : un tirage au hasard donnerait un P@1 d'environ 0,1 % (≈ 20 photos de la
@@ -113,7 +114,7 @@ CelebA : pas de redistribution).
 
 - **Extraction sur le Mac (GPU Apple M2) au lieu de Colab** : GPU gratuits de
   Colab indisponibles. Vérifié sans effet : écart ≤ 0,0005 avec un calcul CPU,
-  cosinus 1,000000. Durée 94 min. Révision `145fe16`.
+  cosinus 1,000000. Durée 94,6 min. Révision `145fe16`.
 - **LDA recodée** : la LDA de scikit-learn (solveur eigen) calcule une covariance
   par classe, trop lent pour 7 689 classes en 2 048 dimensions ; un premier
   passage a été interrompu (`runs/20261109-180556_2d_reference_lda`, vide).
@@ -138,7 +139,32 @@ CelebA : pas de redistribution).
 - Les intervalles de l'étape 2 viennent du bootstrap sur les identités de
   validation ; les intervalles sur graines viendront à l'étape 3.
 
-## 6. Où sont les fichiers
+## 6. Vérifications faites avant la rédaction (2026-11-09)
+
+Ces chiffres sont définitifs : ils ont été contrôlés de façon indépendante.
+
+| Contrôle | Résultat |
+|---|---|
+| 44 tests automatiques | tous au vert |
+| Empreintes des fichiers CelebA | identiques aux officielles |
+| 84 vecteurs recalculés depuis les images (2 backbones × 2 résolutions × 3 parties, dont les limites de morceaux) | identiques aux vecteurs enregistrés (1 − cos ≤ 2·10⁻⁷) ; aucun décalage |
+| MAP@R, P@1, R-Precision recalculés avec **pytorch-metric-learning** (bibliothèque de Musgrave, `AccuracyCalculator`) sur les 8 lignes du tableau | **identiques à 4 décimales** |
+| TAR@FAR, AUC (Mann-Whitney), EER recalculés indépendamment | identiques |
+| Bootstrap avec 5 graines et avec 10 000 tirages | IC stable : [+3,44 ; +4,18] à ±0,04 près |
+| Relance complète de l'étape 2d | résultats identiques (écart 0,0) |
+| Ordre ACP/normalisation de Musgrave (ACP puis L2) au lieu du nôtre (L2 puis ACP) | brut modifié de 0,07 point au plus ; décision inchangée |
+| 106 chiffres de `docs/resultats.md` et `docs/protocole.md` croisés avec les fichiers | 1 écart corrigé (P@1 39,7 et non 39,8 dans le protocole) |
+
+Précisions issues de ces contrôles :
+- Marge LDA − brut (Barlow Twins 224) : 9,22 points, IC 95 % [8,50 ; 9,96].
+- Les 1 000 000 de paires négatives sont tirées **avec remise** : 2 554 doublons
+  (0,26 %), effet négligeable.
+- Repère Musgrave, réglage comparable au nôtre (128 dimensions, un modèle) : les
+  pertes gagnent **+3,6 à +7,0** points de MAP@R sur le brut pour CUB200
+  (+10,2 à +13,7 sur Cars196, +15,1 à +21,0 sur SOP). Ne pas écrire « environ
+  10 points » sans préciser.
+
+## 7. Où sont les fichiers
 
 | Quoi | Où | Sauvegardé ailleurs ? |
 |---|---|---|
