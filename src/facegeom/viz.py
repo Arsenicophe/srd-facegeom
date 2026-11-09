@@ -33,7 +33,10 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
     nrows = (len(panels) + ncols - 1) // ncols
     fig, axes = plt.subplots(nrows, ncols, figsize=(5.2 * ncols, 3.4 * nrows), sharex=True, sharey=True)
     axes = np.atleast_1d(axes).ravel()
-    bins = np.linspace(-0.2, 1.0, 121)
+    # Bornes communes couvrant toutes les données (aucune valeur coupée)
+    lo = min(min(p["same"].min(), p["diff"].min()) for p in panels)
+    hi = max(max(p["same"].max(), p["diff"].max()) for p in panels)
+    bins = np.linspace(np.floor(lo * 10) / 10, np.ceil(hi * 10) / 10, 121)
     for ax, p in zip(axes, panels):
         for scores, color, label in [(p["diff"], DIFF_COLOR, "personnes différentes"),
                                      (p["same"], SAME_COLOR, "même personne")]:
@@ -42,8 +45,8 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
             ax.hist(scores, bins=bins, density=True, histtype="step", linewidth=2,
                     color=color, label=label)
         ax.set_title(p["title"], fontsize=10, color=INK, loc="left")
-        if p.get("note"):
-            ax.text(0.02, 0.95, p["note"], transform=ax.transAxes, fontsize=8, color=MUTED, va="top")
+        if p.get("note"):  # à droite du titre, hors de la zone des barres
+            ax.set_title(p["note"], fontsize=8, color=MUTED, loc="right")
         ax.grid(axis="y", color=GRID, linewidth=0.8)
         ax.set_axisbelow(True)
         for side in ["top", "right"]:
