@@ -60,7 +60,15 @@ def neighbors_sheet(rows: list[dict], out_path: str | Path, title: str) -> Path:
     return out_path
 
 
-def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int = 2) -> Path:
+FR_LABELS = {"diff": "personnes différentes", "same": "même personne",
+             "x": "similarité cosinus", "y": "densité"}
+EN_LABELS = {"diff": "different people", "same": "same person",
+             "x": "cosine similarity", "y": "density"}
+
+
+def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int = 2,
+                          labels: dict | None = None, panel_size=(5.2, 3.4),
+                          dpi: int = 150) -> Path:
     """Petits multiples : pour chaque panneau, histogrammes superposés des similarités.
 
     Chaque panneau est un dict ``title``, ``same`` (scores des paires même
@@ -69,16 +77,18 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
     """
     import numpy as np
 
+    labels = labels or FR_LABELS
     nrows = (len(panels) + ncols - 1) // ncols
-    fig, axes = plt.subplots(nrows, ncols, figsize=(5.2 * ncols, 3.4 * nrows), sharex=True, sharey=True)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(panel_size[0] * ncols, panel_size[1] * nrows),
+                             sharex=True, sharey=True)
     axes = np.atleast_1d(axes).ravel()
     # Bornes communes couvrant toutes les données (aucune valeur coupée)
     lo = min(min(p["same"].min(), p["diff"].min()) for p in panels)
     hi = max(max(p["same"].max(), p["diff"].max()) for p in panels)
     bins = np.linspace(np.floor(lo * 10) / 10, np.ceil(hi * 10) / 10, 121)
     for ax, p in zip(axes, panels):
-        for scores, color, label in [(p["diff"], DIFF_COLOR, "personnes différentes"),
-                                     (p["same"], SAME_COLOR, "même personne")]:
+        for scores, color, label in [(p["diff"], DIFF_COLOR, labels["diff"]),
+                                     (p["same"], SAME_COLOR, labels["same"])]:
             ax.hist(scores, bins=bins, density=True, histtype="stepfilled", alpha=0.35,
                     color=color, linewidth=0)
             ax.hist(scores, bins=bins, density=True, histtype="step", linewidth=2,
@@ -96,14 +106,14 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
     for ax in axes[len(panels):]:
         ax.set_visible(False)
     for ax in axes[-ncols:]:
-        ax.set_xlabel("similarité cosinus", fontsize=9, color=MUTED)
+        ax.set_xlabel(labels["x"], fontsize=9, color=MUTED)
     for ax in axes[::ncols]:
-        ax.set_ylabel("densité", fontsize=9, color=MUTED)
+        ax.set_ylabel(labels["y"], fontsize=9, color=MUTED)
     axes[0].legend(frameon=False, fontsize=8, loc="upper right")
     fig.tight_layout()
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=150, facecolor="#fcfcfb")
+    fig.savefig(out_path, dpi=dpi, facecolor="#fcfcfb")
     plt.close(fig)
     return out_path
 
