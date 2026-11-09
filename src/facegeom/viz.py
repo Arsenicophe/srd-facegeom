@@ -21,6 +21,45 @@ DIFF_COLOR = "#eb6834"  # paires « personnes différentes »
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e6e5e1"
 
 
+GOOD, BAD = "#0ca30c", "#d03b3b"  # couleurs d'état, toujours avec ✓ / ✗
+
+
+def neighbors_sheet(rows: list[dict], out_path: str | Path, title: str) -> Path:
+    """Une ligne par requête : la requête puis ses k plus proches voisins.
+
+    Chaque ligne : ``query`` (image), ``neighbors`` (liste d'images),
+    ``correct`` (liste de booléens), ``sims`` (similarités).
+    Bonne personne : cadre vert et ✓ ; mauvaise : cadre rouge et ✗.
+    """
+    k = len(rows[0]["neighbors"])
+    fig, axes = plt.subplots(len(rows), k + 1, figsize=(1.45 * (k + 1), 1.75 * len(rows)))
+    for i, row in enumerate(rows):
+        ax = axes[i, 0]
+        ax.imshow(row["query"])
+        ax.set_xlabel("requête", fontsize=7, color=INK)
+        for side in ax.spines.values():
+            side.set_edgecolor(INK)
+            side.set_linewidth(2.5)
+        for j, (img, ok, s) in enumerate(zip(row["neighbors"], row["correct"], row["sims"]), start=1):
+            ax = axes[i, j]
+            ax.imshow(img)
+            color = GOOD if ok else BAD
+            for side in ax.spines.values():
+                side.set_edgecolor(color)
+                side.set_linewidth(2.5)
+            ax.set_xlabel(f"{'✓' if ok else '✗'} {s:.2f}", fontsize=7, color=INK)
+    for ax in axes.flat:
+        ax.set_xticks([])
+        ax.set_yticks([])
+    fig.suptitle(title, fontsize=10, color=INK, x=0.01, ha="left")
+    fig.tight_layout()
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=130, facecolor="#fcfcfb")
+    plt.close(fig)
+    return out_path
+
+
 def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int = 2) -> Path:
     """Petits multiples : pour chaque panneau, histogrammes superposés des similarités.
 
