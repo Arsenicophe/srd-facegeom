@@ -28,3 +28,11 @@ verification:
   n_negative: 1000000
   seed: 0
   fars: [0.1, 0.01, 0.001]
+
+# Règle de décision de l'étape 2 (docs/protocole.md, section 5), fixée le
+# 2026-11-09 avant tout calcul. Seuils en points de MAP@R (%).
+decision:
+  margin_comfortable: 5.0   # écart LDA − brut ≥ 5 : on continue
+  margin_minimum: 2.0       # écart < 2 : arrêt et discussion
+  lda_minimum: 5.0          # LDA < 5 % pour les deux backbones : arrêt
+  tie_breaker: resnet50_sup # backbone retenu si les deux sont « proches »
