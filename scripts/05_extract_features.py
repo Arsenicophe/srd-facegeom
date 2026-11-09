@@ -17,6 +17,7 @@ import pandas as pd
 import torch
 
 from facegeom.config import load_config
+from facegeom.device import default_device
 from facegeom.data.crop import crop_box
 from facegeom.data.download import md5sum
 from facegeom.data.transforms import build_transform
@@ -33,7 +34,7 @@ def main() -> None:
     parser.add_argument("--source", required=True, help="dossier d'images ou zip CelebA")
     parser.add_argument("--out-root", default=None, help="remplace <drive_root>/features")
     parser.add_argument("--limit", type=int, default=None, help="essai : N premières images par partie")
-    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--device", default=default_device())
     args = parser.parse_args()
 
     data_cfg = load_config(args.data_config)

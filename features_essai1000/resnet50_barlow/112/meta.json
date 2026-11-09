@@ -1,0 +1,77 @@
+{
+  "runs": [
+    {
+      "backbone": "resnet50_barlow",
+      "weights": {
+        "description": "ResNet-50 Barlow Twins (auto-supervisé ImageNet), checkpoint officiel facebookresearch/barlowtwins",
+        "url": "https://dl.fbaipublicfiles.com/barlowtwins/ep1000_bs2048_lrw0.2_lrb0.0048_lambd0.0051/resnet50.pth",
+        "sha256": "e00d00fcc75fc3b45f6707813973a7e9aefd546713d05a919fa209a9d4002114"
+      },
+      "resolution": 112,
+      "crop_box": [
+        24,
+        52,
+        152,
+        180
+      ],
+      "normalize": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      },
+      "extraction": {
+        "splits": [
+          "train",
+          "val",
+          "test"
+        ],
+        "output_dir": "features",
+        "chunk_size": 8192,
+        "batch_size": 128,
+        "num_workers": 2,
+        "storage_dtype": "float16",
+        "amp": false
+      },
+      "limit": 1000,
+      "splits_md5": {
+        "train": "151abcb34469e621aa88dacc640f775c",
+        "val": "d7191fde15aed684c26a47b8d66eff12",
+        "test": "b7e083dc2bf99beff6012fb71dfbda1b"
+      },
+      "timings": {
+        "train": {
+          "images": 1000,
+          "seconds": 32.6
+        },
+        "val": {
+          "images": 1000,
+          "seconds": 35.9
+        },
+        "test": {
+          "images": 1000,
+          "seconds": 33.2
+        }
+      },
+      "run": {
+        "date": "2026-11-09T14:51:49+00:00",
+        "git_revision": "425de6588f34f67ad0529c68649b1b7f559187a3-dirty",
+        "python": "3.13.9",
+        "versions": {
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
+          "numpy": "2.3.4",
+          "scikit-learn": "1.8.0",
+          "pytorch-metric-learning": null
+        },
+        "device": "mps"
+      }
+    }
+  ]
+}

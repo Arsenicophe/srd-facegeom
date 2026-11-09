@@ -18,6 +18,7 @@ import torch
 import torch.nn.functional as F
 
 from facegeom.config import load_config
+from facegeom.device import default_device
 from facegeom.data.images import open_celeba_zip, read_image
 from facegeom.data.transforms import build_transform
 from facegeom.models.backbones import FEATURE_DIM, load_backbone
@@ -29,7 +30,7 @@ def main() -> None:
     parser.add_argument("--extract-config", default="configs/extract.yaml")
     parser.add_argument("--zip", required=True)
     parser.add_argument("--n-images", type=int, default=8)
-    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--device", default=default_device())
     args = parser.parse_args()
 
     data_cfg = load_config(args.data_config)
