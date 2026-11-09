@@ -151,7 +151,7 @@ entre parties) : pas besoin du repli.
 | Réseau | Source | Entraînement |
 |---|---|---|
 | ResNet-50 supervisé | torchvision, poids **IMAGENET1K_V1** | Classification ImageNet |
-| ResNet-50 Barlow Twins | torch.hub, dépôt officiel facebookresearch | Auto-supervisé sur ImageNet |
+| ResNet-50 Barlow Twins | checkpoint officiel facebookresearch (téléchargé directement) | Auto-supervisé sur ImageNet |
 
 Même architecture, mêmes données d'entraînement : **seul l'objectif de
 pré-entraînement diffère**. Les poids V2 de torchvision sont écartés car ils
@@ -204,9 +204,9 @@ Similarité cosinus entre les vecteurs de 2 048 tels quels. On calcule MAP@R,
 P@1 et les histogrammes de similarité. C'est le plancher : ce que le réseau donne
 sans travail de notre part.
 
-**[à valider]** Musgrave présente aussi sa ligne « Pretrained » après réduction
-par ACP à la dimension de l'embedding. On calcule donc aussi une version ACP à
-128 dimensions (ACP ajustée sur l'entraînement), comparable à la tête.
+Comme la ligne « Pretrained » de Musgrave, on calcule aussi une version réduite
+par **ACP à 128 dimensions** (ACP ajustée sur l'entraînement), comparable à la
+LDA et à la tête. **C'est cette version qui sert dans la règle de décision.**
 
 ### (b) Référence LDA
 
@@ -227,12 +227,36 @@ métriques.
 | haute | haute | Déjà bien rangé : les pertes apporteront peu |
 | basse | basse | Rien à récupérer : le dispositif gelé ne tient pas, à discuter en groupe |
 
-### Décisions qui en découlent
+### Règle de décision (fixée le 2026-11-09, avant tout calcul de l'étape 2)
 
-1. **Résolution** : celle (112 ou 224) dont la LDA est la meilleure en validation.
-2. **Backbone** : celui dont la LDA est la plus haute en validation. Si les deux
-   sont proches, le **supervisé**.
-3. La comparaison des deux backbones bruts reste un résultat du rapport.
+Mesure : **MAP@R sur la validation**. « Brute » = version ACP 128.
+
+1. **Résolution** : pour chaque backbone, celle (112 ou 224) dont la LDA a le
+   meilleur MAP@R.
+2. **Backbone** : celui dont la LDA (à sa résolution retenue) a le meilleur
+   MAP@R, **sauf si les deux sont proches**, auquel cas le **supervisé**.
+   - « Proches » : intervalle à 95 % de l'écart de MAP@R LDA entre les deux
+     backbones contenant 0, obtenu par **bootstrap sur les identités de
+     validation** (1 000 tirages avec remise, graine 0).
+3. **Marge laissée aux pertes** : écart MAP@R LDA − brute sur le backbone retenu.
+
+   | Écart | Lecture | Conséquence |
+   |---|---|---|
+   | ≥ 5 points | marge confortable | on continue |
+   | 2 à 5 points | marge faible | on continue ; risque de pertes indistinguables, à écrire |
+   | < 2 points | pas de marge | arrêt et discussion avant tout entraînement |
+
+4. **Rien à exploiter** : si le MAP@R de la LDA est **< 5 %** pour les deux
+   backbones, le dispositif gelé ne tient pas ; arrêt et discussion.
+
+Les seuils sont des **choix raisonnés, pas des valeurs de la littérature** :
+avec un écart-type supposé d'environ 1,5 point entre graines, une marge totale
+inférieure à 2 points noierait forcément les écarts entre pertes ; chez Musgrave,
+les pertes gagnent environ 10 points de MAP@R sur le réseau brut (CUB200), 5
+points en est la moitié.
+
+La comparaison des deux backbones bruts reste un résultat du rapport, quel que
+soit le choix.
 
 ### Planche des plus proches voisins
 
@@ -478,3 +502,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 3 : recadrage fixé à 128 px après inspection de la planche |
 | 2026-11-09 | Section 4 : chargement vérifié des deux backbones (SHA-256, clés tolérées) |
 | 2026-11-09 | Section 4 : extraction complète sur GPU Apple (Colab sans GPU) |
+| 2026-11-09 | Section 5 : règle de décision de l'étape 2 fixée avant tout calcul ; ACP 128 validée |
