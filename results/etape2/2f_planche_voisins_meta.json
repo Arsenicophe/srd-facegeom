@@ -1,0 +1,34 @@
+{
+  "backbone": "resnet50_barlow",
+  "resolution": 224,
+  "queries": [
+    "179700.jpg",
+    "165016.jpg",
+    "177093.jpg",
+    "176464.jpg",
+    "163956.jpg",
+    "171841.jpg",
+    "178626.jpg",
+    "173090.jpg",
+    "164690.jpg",
+    "178774.jpg"
+  ],
+  "summary": {
+    "brut (ACP 128)": "3/50 voisins de la bonne personne",
+    "LDA 128": "16/50 voisins de la bonne personne"
+  },
+  "seed": 0,
+  "run": {
+    "date": "2026-11-09T17:26:13+00:00",
+    "git_revision": "f7815c4ad295804a773d8736d2ed98d5938b3288",
+    "python": "3.13.9",
+    "versions": {
+      "torch": "2.13.0",
+      "torchvision": "0.28.0",
+      "numpy": "2.3.4",
+      "scikit-learn": "1.8.0",
+      "pytorch-metric-learning": null
+    },
+    "device": null
+  }
+}

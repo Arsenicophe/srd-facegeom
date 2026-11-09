@@ -6,6 +6,8 @@ Contexte court, chargé à chaque session. Le détail est ailleurs :
   en cas de doute ou de contradiction, c'est lui qui fait foi.
 - `references/musgrave2020_fiche.md` — fiche de lecture de l'article de référence
   (PDF à côté).
+- **`docs/resultats.md`** — tous les résultats obtenus, pour la synthèse
+  d'avancement (tableaux dans `results/`, figures dans `docs/figures/`).
 - `docs/archive/` — anciens documents, à ne pas suivre.
 
 ## Le projet

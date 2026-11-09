@@ -1,0 +1,44 @@
+{
+  "source_run": "runs/20261109-181718_2d_reference_lda",
+  "rule": {
+    "margin_comfortable": 5.0,
+    "margin_minimum": 2.0,
+    "lda_minimum": 5.0,
+    "tie_breaker": "resnet50_sup"
+  },
+  "rule1_resolution": {
+    "resnet50_sup": 224,
+    "resnet50_barlow": 224
+  },
+  "rule2_backbone": {
+    "bootstrap": {
+      "diff": 3.806710013684722,
+      "ci_low": 3.4415120578124374,
+      "ci_high": 4.18245961074224,
+      "contains_zero": false
+    },
+    "chosen": "resnet50_barlow",
+    "reason": "écart solide (IC exclut 0)"
+  },
+  "rule3_margin": {
+    "margin": 9.222859166286174,
+    "verdict": "marge confortable : on continue"
+  },
+  "selected": {
+    "backbone": "resnet50_barlow",
+    "resolution": 224
+  },
+  "run": {
+    "date": "2026-11-09T17:22:00+00:00",
+    "git_revision": "64e7b55b0ad758e0ac3afe3a1ca591e77fd7385f",
+    "python": "3.13.9",
+    "versions": {
+      "torch": "2.13.0",
+      "torchvision": "0.28.0",
+      "numpy": "2.3.4",
+      "scikit-learn": "1.8.0",
+      "pytorch-metric-learning": null
+    },
+    "device": null
+  }
+}
