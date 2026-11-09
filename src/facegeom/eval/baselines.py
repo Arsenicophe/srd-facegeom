@@ -34,17 +34,41 @@ class CenteredLDA:
         self.dim = dim
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> "CenteredLDA":
-        from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+        """Même calcul que ``LinearDiscriminantAnalysis(solver="eigen")`` de
+        scikit-learn, mais les matrices de dispersion sont obtenues par deux
+        produits de matrices au lieu d'une covariance par classe (7 689 classes
+        en 2 048 dimensions rendraient le calcul de scikit-learn très long).
+        L'équivalence est vérifiée dans tests/test_baselines.py.
+        """
+        from scipy.linalg import eigh
 
-        n_classes = len(np.unique(y))
+        classes, yi = np.unique(np.asarray(y), return_inverse=True)
+        n_classes = len(classes)
         if self.dim > n_classes - 1:
             raise ValueError(f"LDA : au plus {n_classes - 1} dimensions pour {n_classes} classes.")
         x = np.asarray(x, dtype=np.float64)
+        n, d = x.shape
         self.mean_ = x.mean(axis=0)
-        lda = LinearDiscriminantAnalysis(solver="eigen", n_components=self.dim).fit(x, y)
-        self.scalings_ = lda.scalings_[:, : self.dim]
-        # Part de la séparation (rapport inter/intra) portée par les dimensions gardées
-        self.explained_variance_ratio_ = lda.explained_variance_ratio_[: self.dim]
+
+        counts = np.bincount(yi).astype(np.float64)
+        means = np.zeros((n_classes, d))
+        np.add.at(means, yi, x)
+        means /= counts[:, None]
+
+        # Dispersion intra-classe : Σ_k (n_k/n) · cov_k avec cov_k biaisée
+        # (convention scikit-learn), ce qui se simplifie en xcᵀ xc / n
+        xc = x - means[yi]
+        sw = xc.T @ xc / n
+        # Dispersion totale (covariance biaisée), inter = totale − intra
+        xt = x - self.mean_
+        st = xt.T @ xt / n
+        sb = st - sw
+
+        evals, evecs = eigh(sb, sw)
+        order = np.argsort(evals)[::-1]
+        evals, evecs = evals[order], evecs[:, order]
+        self.scalings_ = evecs[:, : self.dim]
+        self.explained_variance_ratio_ = (evals / evals.sum())[: self.dim]
         return self
 
     def transform(self, x: np.ndarray) -> np.ndarray:

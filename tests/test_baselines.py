@@ -37,6 +37,23 @@ def test_lda_output_shape_and_centering():
     np.testing.assert_allclose(z.mean(axis=0), 0, atol=1e-6)  # centré sur l'entraînement
 
 
+def test_lda_matches_scikit_learn_eigen_solver():
+    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+    from facegeom.eval.baselines import CenteredLDA
+
+    rng = np.random.default_rng(3)
+    y = np.repeat(np.arange(12), rng.integers(4, 9, size=12))  # classes de tailles inégales
+    x = rng.normal(size=(len(y), 10)) + rng.normal(size=(12, 10))[y]
+    ours = CenteredLDA(5).fit(x, y)
+    ref = LinearDiscriminantAnalysis(solver="eigen", n_components=5).fit(x, y)
+    np.testing.assert_allclose(ours.explained_variance_ratio_, ref.explained_variance_ratio_[:5], rtol=1e-8)
+    # Mêmes directions, au signe près
+    for j in range(5):
+        a, b = ours.scalings_[:, j], ref.scalings_[:, j]
+        assert min(np.abs(a - b).max(), np.abs(a + b).max()) < 1e-8 * np.abs(b).max() * 100
+
+
 def test_lda_dim_limited_by_number_of_classes():
     xtr, ytr = _data(5, 5, seed=0)
     with pytest.raises(ValueError):
