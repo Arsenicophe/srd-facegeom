@@ -98,8 +98,8 @@ même graine, même résultat.
 
 - [x] Bibliographie annotée (1 page, anglais)
 - [x] Protocole expérimental rédigé (`docs/protocole.md`), 4 points [à valider]
-- [ ] Étape 0 : dépôt git (fait), notebook Colab (fait), CelebA sur Drive (fait), partition,
-      test de non-recouvrement
+- [x] Étape 0 : dépôt git, notebook Colab, CelebA sur Drive, partition (`splits/`),
+      test de non-recouvrement (`tests/test_splits.py`)
 - [ ] Étape 1 : extraction des vecteurs
 - [ ] Étape 2 : mesures préalables, choix du backbone et de la résolution
 - [ ] Étapes 3 à 5 : réglage, entraînements finaux, test

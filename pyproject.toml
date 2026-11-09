@@ -37,3 +37,5 @@ target-version = "py310"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Permet de lancer pytest sans installer le paquet.
+pythonpath = ["src"]
