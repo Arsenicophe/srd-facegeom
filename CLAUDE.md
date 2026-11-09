@@ -100,7 +100,8 @@ même graine, même résultat.
 - [x] Protocole expérimental rédigé (`docs/protocole.md`), 4 points [à valider]
 - [x] Étape 0 : dépôt git, notebook Colab, CelebA sur Drive, partition (`splits/`),
       test de non-recouvrement (`tests/test_splits.py`)
-- [ ] Étape 1 : extraction des vecteurs
+- [x] Étape 1 : extraction des vecteurs (sur le Mac, GPU Apple ; `features/` local,
+      envoi sur Drive à faire)
 - [ ] Étape 2 : mesures préalables, choix du backbone et de la résolution
 - [ ] Étapes 3 à 5 : réglage, entraînements finaux, test
 

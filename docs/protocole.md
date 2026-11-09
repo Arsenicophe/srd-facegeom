@@ -169,6 +169,18 @@ utilisent une autre recette d'entraînement.
 - Vérifié sur 8 images de validation : sortie (N, 2048) finie ; même entrée →
   même sortie ; supervisé identique au modèle torchvision officiel.
 
+**Extraction (étapes 1d–1e)**
+- Faute de GPU disponible sur Colab gratuit, l'extraction a tourné **sur le Mac
+  (GPU Apple M2, MPS)**, révision `145fe16`, calcul en float32, stockage en
+  float16. Sur 16 images, écart avec un calcul CPU float32 ≤ 0,0005 (cosinus
+  1,000000) : l'appareil n'a pas d'effet. Tous les vecteurs viennent du même
+  passage.
+- Durée : 94 min pour 201 172 images (train 70 min, val 12 min, test 12 min).
+- 12 fichiers (2 backbones × 2 résolutions × 3 parties), 3,1 Go, vérifiés :
+  formes, ordre identique aux fichiers `splits/`, aucune valeur non finie.
+- Le test est extrait comme le reste mais **n'est lu par aucun calcul** avant
+  l'évaluation finale.
+
 ### Extraction
 
 - Vecteur = sortie avant la couche de classification : **2 048 dimensions**.
@@ -465,3 +477,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 3 : résultat de la partition (découpage officiel disjoint, effet du filtre) |
 | 2026-11-09 | Section 3 : recadrage fixé à 128 px après inspection de la planche |
 | 2026-11-09 | Section 4 : chargement vérifié des deux backbones (SHA-256, clés tolérées) |
+| 2026-11-09 | Section 4 : extraction complète sur GPU Apple (Colab sans GPU) |
