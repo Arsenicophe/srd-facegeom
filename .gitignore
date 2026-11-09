@@ -1,6 +1,7 @@
 # Données, vecteurs et résultats : sur Google Drive, jamais dans git
 /data/
 /features/
+/features_*/
 /runs/
 *.zip
 *.npy
