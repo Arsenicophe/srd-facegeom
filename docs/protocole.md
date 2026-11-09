@@ -157,6 +157,18 @@ Même architecture, mêmes données d'entraînement : **seul l'objectif de
 pré-entraînement diffère**. Les poids V2 de torchvision sont écartés car ils
 utilisent une autre recette d'entraînement.
 
+**Chargement (étape 1b, `configs/extract.yaml`)**
+- Les deux fichiers de poids sont téléchargés directement depuis leur source
+  officielle et vérifiés par empreinte SHA-256, puis chargés dans le ResNet-50
+  de torchvision. Pas de `torch.hub.load`, qui exécuterait du code distant ;
+  c'est d'ailleurs exactement ce que fait le dépôt officiel de Barlow Twins.
+- Clés absentes tolérées, et seulement elles : la couche de classification
+  `fc` (absente du checkpoint Barlow Twins, retirée de toute façon) et les
+  compteurs `num_batches_tracked` des BatchNorm (absents du checkpoint
+  supervisé V1, inutilisés en mode évaluation).
+- Vérifié sur 8 images de validation : sortie (N, 2048) finie ; même entrée →
+  même sortie ; supervisé identique au modèle torchvision officiel.
+
 ### Extraction
 
 - Vecteur = sortie avant la couche de classification : **2 048 dimensions**.
@@ -452,3 +464,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Première version, à partir des décisions prises en séance |
 | 2026-11-09 | Section 3 : résultat de la partition (découpage officiel disjoint, effet du filtre) |
 | 2026-11-09 | Section 3 : recadrage fixé à 128 px après inspection de la planche |
+| 2026-11-09 | Section 4 : chargement vérifié des deux backbones (SHA-256, clés tolérées) |
