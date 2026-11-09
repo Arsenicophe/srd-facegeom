@@ -27,7 +27,19 @@ Google Drive, pas dans ce dépôt.
 
 ## Lancer sur Colab
 
-À compléter (étape 0d).
+Chaque session commence par [`notebooks/00_demarrage_colab.ipynb`](notebooks/00_demarrage_colab.ipynb) :
+montage de Drive, récupération du code, installation, versions, et copie de
+CelebA si besoin.
+
+Ouvrir un notebook du dépôt dans Colab : Fichier → Ouvrir un notebook → onglet
+GitHub → `Arsenicophe/srd-facegeom`. Le dépôt est public : aucun jeton n'est
+nécessaire.
+
+### Dossier Drive
+
+Le notebook crée `MyDrive/srd-facegeom/{data,features,runs}` sur le Drive du
+compte connecté. Pour le groupe, Arsène partage ce dossier, et chaque membre
+ajoute un raccourci vers « Mon Drive » pour retrouver le même chemin.
 
 ## Installation locale
 

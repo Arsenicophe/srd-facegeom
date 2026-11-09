@@ -30,7 +30,7 @@ effacée à chaque déconnexion, les sessions sont limitées en durée.
 
 | Quoi | Où |
 |---|---|
-| Code | GitHub `Arsenicophe/srd-facegeom` (privé) ; Colab le clone à chaque session |
+| Code | GitHub `Arsenicophe/srd-facegeom` (public) ; Colab le clone à chaque session |
 | CelebA | Google Drive (compte d'Arsène), **un seul zip**, copié et décompressé sur Colab à chaque session |
 | Vecteurs extraits, résultats des runs | Google Drive |
 | Copie de travail du code | `~/Projets/SRD` sur le Mac d'Arsène, **hors d'iCloud** |
