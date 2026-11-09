@@ -98,7 +98,7 @@ même graine, même résultat.
 
 - [x] Bibliographie annotée (1 page, anglais)
 - [x] Protocole expérimental rédigé (`docs/protocole.md`), 4 points [à valider]
-- [ ] Étape 0 : dépôt git (fait), notebook Colab, CelebA sur Drive, partition,
+- [ ] Étape 0 : dépôt git (fait), notebook Colab (fait), CelebA sur Drive, partition,
       test de non-recouvrement
 - [ ] Étape 1 : extraction des vecteurs
 - [ ] Étape 2 : mesures préalables, choix du backbone et de la résolution

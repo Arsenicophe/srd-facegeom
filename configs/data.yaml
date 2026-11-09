@@ -1,0 +1,20 @@
+# Données : source de CelebA et emplacements sur Google Drive.
+# Voir docs/protocole.md, section 3.
+
+drive_root: /content/drive/MyDrive/srd-facegeom
+
+celeba:
+  # Copie des fichiers d'origine sur Hugging Face, figée à une révision précise.
+  source:
+    repo_id: Yuehao/celeba
+    repo_type: dataset
+    revision: 35ebb31405e9da028409199a494f2e77eb10f253
+  # Dossier de destination, relatif à drive_root.
+  dest_dir: data/celeba
+  # Empreintes MD5 des fichiers officiels, reprises de torchvision
+  # (torchvision.datasets.CelebA.file_list). Un fichier dont l'empreinte diffère
+  # est refusé.
+  files:
+    img_align_celeba.zip: 00d2c5bc6d35e252742224ab0c1e8fcb
+    identity_CelebA.txt: 32bd1bd63d3c78cd57e08160ec5ed1e2
+    list_eval_partition.txt: d32c9cbf5e040fd4025c592c306e6668
