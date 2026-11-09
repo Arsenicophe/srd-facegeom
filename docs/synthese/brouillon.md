@@ -97,3 +97,23 @@ at a false acceptance rate of 1%.
 **Figure 1** (`docs/figures/report_hist_barlow224.png`). Cosine similarity of
 same-person and different-people pairs on validation identities, Barlow Twins at
 224 pixels, before and after LDA.
+
+## 5. Next steps — VALIDÉE
+
+We will now train the linear head with each of the four losses on the Barlow
+Twins features. Each loss receives ten configurations, the best one is retrained
+with five seeds, and losses are compared seed by seed. Beyond accuracy, we will
+compare the geometry each loss produces, using similarity histograms and the
+alignment and uniformity measures of Wang and Isola [12]. Test identities will
+be evaluated once, at the end. We will also run the classical baselines of our
+bibliography, namely Eigenfaces [1], Fisherfaces [2] and local binary patterns
+[3], on the same splits, to place learned representations next to hand-designed
+ones. Robustness to image degradations is planned as an optional extension.
+
+Fin de la section 5, validée :
+
+Two points will guide how we read these results. Because the backbone is frozen,
+we measure what each loss does as a linear reorganisation of fixed features, not
+how it would shape a network trained end to end. And the two backbones differ in
+their whole pre-training recipe, including data augmentation, so the gap between
+them cannot be attributed to the objective alone.
