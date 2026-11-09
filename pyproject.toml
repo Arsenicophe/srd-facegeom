@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "facegeom"
+version = "0.1.0"
+description = "SRD sujet 09 : effet de la fonction de coût sur la géométrie des représentations de visages"
+readme = "README.md"
+requires-python = ">=3.10"
+# torch et torchvision ne sont pas épinglés : Colab fournit les siens.
+# Les versions réellement utilisées sont enregistrées dans chaque run.
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "pyyaml",
+    "scikit-learn",
+    "scikit-image",
+    "matplotlib",
+    "tqdm",
+    "torch",
+    "torchvision",
+    "pytorch-metric-learning",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
