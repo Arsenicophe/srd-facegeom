@@ -64,3 +64,36 @@ four images each for the contrastive and triplet losses, and 32 identities for
 the two classification losses. Retrieval is measured with MAP@R, our main
 metric, and precision at one; verification with the ROC curve and the true
 acceptance rate at fixed false acceptance rates.
+
+## 4. Progress and preliminary results — VALIDÉE
+
+Before training any loss, we measured two references on validation identities:
+the raw backbone features, reduced to 128 dimensions by PCA to match the head,
+and a linear discriminant analysis fitted on training identities, which shows
+how far a linear head can go. Our metrics match the reference implementation in
+pytorch-metric-learning exactly, and the selection rule was fixed before these
+results were computed.
+
+As shown in Table 1, raw features rank identities poorly, with a MAP@R of 4% at
+best, but LDA more than triples it: identity information is present but badly
+organised, which leaves a margin of 9.2 points for the losses. Figure 1 shows
+how LDA concentrates the similarities of different people around zero. With the
+same architecture and training images, Barlow Twins preserves identity better
+than the supervised model, by 3.8 MAP@R points with a 95% bootstrap confidence
+interval of 3.4 to 4.2, so we selected it at 224 pixels. A visual check of
+nearest neighbours shows that raw neighbours mostly share pose, hair or
+lighting, while LDA neighbours are more often the same person.
+
+**Table 1.** Results on validation identities, in %. TAR: true acceptance rate
+at a false acceptance rate of 1%.
+
+| Backbone | Input | MAP@R raw | MAP@R LDA | TAR raw | TAR LDA |
+|---|---|---|---|---|---|
+| Supervised | 112 | 2.3 | 6.1 | 11.2 | 28.0 |
+| Supervised | 224 | 2.8 | 9.4 | 11.2 | 33.4 |
+| Barlow Twins | 112 | 3.3 | 8.5 | 13.9 | 31.8 |
+| **Barlow Twins** | **224** | **4.0** | **13.2** | **15.8** | **38.4** |
+
+**Figure 1** (`docs/figures/report_hist_barlow224.png`). Cosine similarity of
+same-person and different-people pairs on validation identities, Barlow Twins at
+224 pixels, before and after LDA.
