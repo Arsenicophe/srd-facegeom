@@ -102,7 +102,8 @@ même graine, même résultat.
       test de non-recouvrement (`tests/test_splits.py`)
 - [x] Étape 1 : extraction des vecteurs (sur le Mac, GPU Apple ; `features/` local,
       envoi sur Drive à faire)
-- [ ] Étape 2 : mesures préalables, choix du backbone et de la résolution
+- [x] Étape 2 : mesures préalables → **Barlow Twins, 224 px** (protocole, section 5) ;
+      reste la planche des plus proches voisins (2f)
 - [ ] Étapes 3 à 5 : réglage, entraînements finaux, test
 
 Mettre cette liste à jour quand une étape est terminée.

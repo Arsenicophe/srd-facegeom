@@ -258,6 +258,33 @@ points en est la moitié.
 La comparaison des deux backbones bruts reste un résultat du rapport, quel que
 soit le choix.
 
+### Résultat (étapes 2c–2e, validation)
+
+MAP@R en % (« brut » = ACP 128) :
+
+| Backbone | Résolution | Brut | LDA | P@1 brut → LDA | AUC brut → LDA | TAR à FAR 10⁻² brut → LDA |
+|---|---|---|---|---|---|---|
+| supervisé | 112 | 2,31 | 6,07 | 18,2 → 32,0 | 80,5 → 86,6 | 11,2 → 28,0 |
+| supervisé | 224 | 2,83 | 9,42 | 21,1 → 41,5 | 81,2 → 89,2 | 11,2 → 33,4 |
+| Barlow Twins | 112 | 3,30 | 8,46 | 24,9 → 39,8 | 81,4 → 89,2 | 13,9 → 31,8 |
+| Barlow Twins | 224 | 4,01 | **13,23** | 28,5 → 51,5 | 82,6 → 91,6 | 15,8 → 38,4 |
+
+Application de la règle (`runs/20261109-182200_2e_decision/decision.json`) :
+1. Résolution : **224 px** pour les deux backbones.
+2. Backbone : LDA Barlow Twins − supervisé = **+3,81 points**, IC 95 %
+   [+3,44 ; +4,18] par bootstrap sur les identités : écart solide →
+   **Barlow Twins**.
+3. Marge : 13,23 − 4,01 = **9,22 points** ≥ 5 → marge confortable.
+4. LDA ≥ 5 % : vérifié.
+
+**Retenu pour l'expérience principale : ResNet-50 Barlow Twins, 224 px.**
+
+Lecture : cas « brut bas, LDA nettement plus haute » ; l'information d'identité
+est présente mais mal rangée. À architecture et données identiques, l'objectif
+auto-supervisé préserve mieux l'identité que l'objectif supervisé, aussi bien
+en brut qu'après LDA. Reste à contrôler que ce n'est pas un effet de style
+(planche des plus proches voisins, étape 2f).
+
 ### Planche des plus proches voisins
 
 Pour une dizaine d'images de validation, afficher les 5 plus proches voisins.
@@ -506,3 +533,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 4 : extraction complète sur GPU Apple (Colab sans GPU) |
 | 2026-11-09 | Section 5 : règle de décision de l'étape 2 fixée avant tout calcul ; ACP 128 validée |
 | 2026-11-09 | Section 10 : 1 000 000 de paires négatives, graine 0 |
+| 2026-11-09 | Section 5 : résultats de l'étape 2 et choix (Barlow Twins, 224 px) |

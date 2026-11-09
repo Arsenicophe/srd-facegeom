@@ -36,3 +36,9 @@ decision:
   margin_minimum: 2.0       # écart < 2 : arrêt et discussion
   lda_minimum: 5.0          # LDA < 5 % pour les deux backbones : arrêt
   tie_breaker: resnet50_sup # backbone retenu si les deux sont « proches »
+
+# Résultat de la règle (étape 2e, runs/20261109-182200_2e_decision) :
+# backbone et résolution de l'expérience principale.
+selected:
+  backbone: resnet50_barlow
+  resolution: 224
