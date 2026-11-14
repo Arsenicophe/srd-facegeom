@@ -1,12 +1,6 @@
-"""Étape 1a : planche d'inspection des tailles de recadrage candidates.
+"""Étape 1a : planche des tailles de recadrage candidates (validation ; visages, donc runs/ seulement).
 
-Images tirées de la VALIDATION (jamais du test). La planche contient des
-visages de CelebA : elle reste dans runs/ (non versionné), elle n'est pas
-redistribuée.
-
-    # Colab (zip copié par le notebook 00) :
     python scripts/03_crop_sheet.py --zip /content/data/img_align_celeba.zip
-    # Local, sans le zip complet (lit seulement les images utiles) :
     python scripts/03_crop_sheet.py --zip hf://datasets/Yuehao/celeba@<révision>/img_align_celeba.zip
 """
 

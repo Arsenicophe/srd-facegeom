@@ -1,9 +1,6 @@
-"""Étape 2f : planche des plus proches voisins, pour contrôler le « style ».
+"""Étape 2f : planche des k plus proches voisins (brut puis LDA) sur la validation, contrôle du style.
 
-Sur la VALIDATION, pour quelques requêtes tirées au hasard (une par identité),
-affiche les k plus proches voisins avec le backbone retenu, en brut (ACP 128)
-puis après LDA. Les images montrées sont les recadrages vus par le réseau.
-La planche contient des visages CelebA : elle reste dans runs/ (non versionné).
+Visages CelebA : reste dans runs/, non versionné.
 
     python scripts/08_neighbors_sheet.py --zip data/celeba/img_align_celeba.zip
 """
@@ -25,6 +22,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/eval.yaml")
     parser.add_argument("--data-config", default="configs/data.yaml")
+    parser.add_argument("--features-root", default=None, help="remplace features_root (Drive sur Colab)")
     parser.add_argument("--zip", required=True)
     parser.add_argument("--n-queries", type=int, default=10)
     parser.add_argument("--k", type=int, default=5)
@@ -32,6 +30,7 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config(args.config)
+    cfg["features_root"] = args.features_root or cfg["features_root"]
     dcfg = load_config(args.data_config)
     if cfg["eval_split"] == "test":
         raise SystemExit("La planche ne doit jamais utiliser le test.")

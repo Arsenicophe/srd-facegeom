@@ -1,7 +1,4 @@
-"""Étape 0f : construit la partition par identité et l'écrit dans splits/.
-
-N'a besoin que de identity_CelebA.txt et list_eval_partition.txt : tourne sur
-Colab comme en local.
+"""Étape 0f : partition par identité, écrite dans splits/ (ne lit que les deux fichiers texte).
 
     python scripts/02_make_splits.py --config configs/data.yaml
     python scripts/02_make_splits.py --data-dir /chemin/vers/celeba   # en local

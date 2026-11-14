@@ -1,9 +1,4 @@
-"""Vérification : « ces deux images sont-elles de la même personne ? ».
-
-Paires positives : **toutes** les paires d'images d'une même identité.
-Paires négatives : un échantillon de taille fixe, tiré avec une graine fixe,
-de paires d'identités différentes. Score d'une paire = similarité cosinus.
-"""
+"""Vérification 1:1 : toutes les paires positives, échantillon fixe de négatives, score = cosinus."""
 
 from __future__ import annotations
 
@@ -13,10 +8,8 @@ from sklearn.metrics import roc_auc_score, roc_curve
 from facegeom.eval.retrieval import l2_normalize
 
 
-def make_pairs(
-    labels: np.ndarray, n_negative: int, seed: int = 0
-) -> tuple[np.ndarray, np.ndarray]:
-    """Renvoie ``(paires, étiquettes)`` : ``paires`` est (M, 2), étiquette 1 = même personne."""
+def make_pairs(labels: np.ndarray, n_negative: int, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:
+    """``(paires (M, 2), y)`` avec y = 1 pour une même personne."""
     labels = np.asarray(labels)
     pos = []
     for lab in np.unique(labels):
@@ -50,30 +43,20 @@ def pair_scores(x: np.ndarray, pairs: np.ndarray, chunk: int = 1_000_000) -> np.
 
 
 def tar_at_far(y: np.ndarray, scores: np.ndarray, fars: list[float]) -> dict[float, float]:
-    """Taux de vraies acceptations au taux de fausses acceptations donné.
-
-    Pour chaque FAR, on prend le seuil le plus bas dont le FAR ne dépasse pas la
-    cible, et on renvoie le TAR correspondant.
-    """
+    """TAR au seuil le plus bas dont le FAR ne dépasse pas la cible."""
     fpr, tpr, _ = roc_curve(y, scores)
-    res = {}
-    for far in fars:
-        ok = fpr <= far
-        res[far] = float(tpr[ok].max()) if ok.any() else 0.0
-    return res
+    return {far: float(tpr[fpr <= far].max()) if (fpr <= far).any() else 0.0 for far in fars}
 
 
 def eer(y: np.ndarray, scores: np.ndarray) -> float:
-    """Taux d'égale erreur : point où fausses acceptations = faux rejets."""
+    """Taux d'égale erreur."""
     fpr, tpr, _ = roc_curve(y, scores)
     fnr = 1 - tpr
     i = int(np.argmin(np.abs(fpr - fnr)))
     return float((fpr[i] + fnr[i]) / 2)
 
 
-def verification_summary(
-    y: np.ndarray, scores: np.ndarray, fars: tuple[float, ...] = (1e-1, 1e-2, 1e-3)
-) -> dict:
+def verification_summary(y: np.ndarray, scores: np.ndarray, fars: tuple[float, ...] = (1e-1, 1e-2, 1e-3)) -> dict:
     """AUC, EER et TAR aux FAR demandés, en pourcentage."""
     n_neg = int((y == 0).sum())
     out = {
@@ -83,6 +66,5 @@ def verification_summary(
         "n_negative": n_neg,
     }
     for far, tar in tar_at_far(y, scores, list(fars)).items():
-        # Règle de trois : sous ~3/n, un FAR ne peut pas être certifié
-        out[f"tar_at_far_{far:g}"] = 100 * tar if far >= 3 / n_neg else None
+        out[f"tar_at_far_{far:g}"] = 100 * tar if far >= 3 / n_neg else None  # règle de trois
     return out

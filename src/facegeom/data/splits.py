@@ -1,10 +1,4 @@
-"""Partition de CelebA par identité.
-
-On part du découpage officiel (``list_eval_partition.txt``), on vérifie
-qu'aucune identité n'apparaît dans deux parties, puis on retire les identités
-qui ont trop peu de photos. Le résultat est écrit en CSV (une ligne par image)
-avec un résumé JSON.
-"""
+"""Partition de CelebA par identité, à partir du découpage officiel."""
 
 from __future__ import annotations
 
@@ -19,11 +13,7 @@ class IdentityOverlapError(RuntimeError):
 
 
 def load_annotations(identity_path: str | Path, partition_path: str | Path) -> pd.DataFrame:
-    """Lit les fichiers CelebA et renvoie un tableau ``image, identity, partition``.
-
-    ``partition`` est le code officiel (0, 1, 2). Vérifie que les deux fichiers
-    décrivent exactement les mêmes images.
-    """
+    """Tableau ``image, identity, partition`` ; vérifie que les deux fichiers concordent."""
     ids = pd.read_csv(identity_path, sep=r"\s+", header=None, names=["image", "identity"])
     part = pd.read_csv(partition_path, sep=r"\s+", header=None, names=["image", "partition"])
     if ids.image.duplicated().any() or part.image.duplicated().any():
@@ -34,37 +24,25 @@ def load_annotations(identity_path: str | Path, partition_path: str | Path) -> p
 
 
 def check_disjoint(df: pd.DataFrame, split_col: str = "split") -> None:
-    """Lève ``IdentityOverlapError`` si une identité apparaît dans plusieurs parties."""
+    """Lève ``IdentityOverlapError`` si une identité est dans plusieurs parties."""
     n_parts = df.groupby("identity")[split_col].nunique()
     shared = n_parts[n_parts > 1]
     if len(shared) > 0:
         raise IdentityOverlapError(
-            f"{len(shared)} identités dans plusieurs parties, par exemple "
-            f"{shared.index[:5].tolist()}"
+            f"{len(shared)} identités dans plusieurs parties, par exemple {shared.index[:5].tolist()}"
         )
 
 
 def filter_min_images(df: pd.DataFrame, min_images: int) -> pd.DataFrame:
-    """Garde seulement les identités ayant au moins ``min_images`` images.
-
-    Le compte se fait par partie ; comme les parties sont disjointes en
-    identités, c'est aussi le compte global.
-    """
+    """Garde les identités ayant au moins ``min_images`` images (compte par partie)."""
     counts = df.groupby(["split", "identity"])["image"].transform("size")
     return df[counts >= min_images].reset_index(drop=True)
 
 
 def build_splits(
-    identity_path: str | Path,
-    partition_path: str | Path,
-    names: dict[int, str],
-    min_images: int,
+    identity_path: str | Path, partition_path: str | Path, names: dict[int, str], min_images: int
 ) -> tuple[pd.DataFrame, dict]:
-    """Construit la partition filtrée et son résumé.
-
-    Renvoie un tableau ``image, identity, split`` et un dict de statistiques
-    avant et après filtrage.
-    """
+    """Partition filtrée (``image, identity, split``) et résumé avant / après filtre."""
     df = load_annotations(identity_path, partition_path)
     unknown = set(df.partition) - set(names)
     if unknown:
@@ -77,10 +55,7 @@ def build_splits(
     check_disjoint(kept)
 
     def stats(d: pd.DataFrame) -> dict:
-        return {
-            s: {"identities": int(g.identity.nunique()), "images": len(g)}
-            for s, g in d.groupby("split")
-        }
+        return {s: {"identities": g.identity.nunique(), "images": len(g)} for s, g in d.groupby("split")}
 
     summary = {
         "rule": {"source": "list_eval_partition.txt", "min_images_per_identity": min_images},
@@ -101,10 +76,4 @@ def write_splits(df: pd.DataFrame, summary: dict, out_dir: str | Path) -> list[P
         written.append(path)
     path = out_dir / "summary.json"
     path.write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    written.append(path)
-    return written
-
-
-def read_split(split_dir: str | Path, split: str) -> pd.DataFrame:
-    """Relit une partie écrite par ``write_splits``."""
-    return pd.read_csv(Path(split_dir) / f"{split}.csv")
+    return [*written, path]

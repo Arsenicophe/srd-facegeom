@@ -1,4 +1,4 @@
-"""Figures d'inspection."""
+"""Figures : planches d'images et histogrammes de similarité."""
 
 from __future__ import annotations
 
@@ -22,6 +22,15 @@ INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e6e5e1"
 
 
 GOOD, BAD = "#0ca30c", "#d03b3b"  # couleurs d'état, toujours avec ✓ / ✗
+
+
+def _save(fig, out_path: str | Path, dpi: int, facecolor: str | None = None) -> Path:
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi, facecolor=facecolor)
+    plt.close(fig)
+    return out_path
+
 
 
 def neighbors_sheet(rows: list[dict], out_path: str | Path, title: str) -> Path:
@@ -53,11 +62,7 @@ def neighbors_sheet(rows: list[dict], out_path: str | Path, title: str) -> Path:
         ax.set_yticks([])
     fig.suptitle(title, fontsize=10, color=INK, x=0.01, ha="left")
     fig.tight_layout()
-    out_path = Path(out_path)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=130, facecolor="#fcfcfb")
-    plt.close(fig)
-    return out_path
+    return _save(fig, out_path, 130, "#fcfcfb")
 
 
 FR_LABELS = {"diff": "personnes différentes", "same": "même personne",
@@ -111,11 +116,7 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
         ax.set_ylabel(labels["y"], fontsize=9, color=MUTED)
     axes[0].legend(frameon=False, fontsize=8, loc="upper right")
     fig.tight_layout()
-    out_path = Path(out_path)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=dpi, facecolor="#fcfcfb")
-    plt.close(fig)
-    return out_path
+    return _save(fig, out_path, dpi, "#fcfcfb")
 
 
 def crop_contact_sheet(
@@ -151,8 +152,4 @@ def crop_contact_sheet(
         ax.set_xticks([])
         ax.set_yticks([])
     fig.tight_layout()
-    out_path = Path(out_path)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=130)
-    plt.close(fig)
-    return out_path
+    return _save(fig, out_path, 130)

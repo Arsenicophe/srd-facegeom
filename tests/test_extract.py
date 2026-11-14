@@ -1,8 +1,4 @@
-"""Tests de l'extraction : ordre, assemblage et reprise après coupure.
-
-Utilise un petit réseau factice et des images synthétiques : rapide, sans
-téléchargement.
-"""
+"""Extraction : ordre, assemblage, reprise après coupure (réseau factice, images synthétiques)."""
 
 import numpy as np
 import pytest

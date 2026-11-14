@@ -1,10 +1,6 @@
-"""Tests de la partition par identité.
+"""Règle n° 1 : aucune identité du test en entraînement ni en validation. Ne JAMAIS désactiver.
 
-Règle n° 1 du protocole : aucune personne du test n'apparaît à l'entraînement
-ni en validation. Ces tests ne doivent JAMAIS être désactivés ou ignorés.
-
-Ils ne lisent que les fichiers versionnés de splits/ : aucune donnée Drive
-n'est nécessaire.
+Ne lit que les fichiers versionnés de splits/.
 """
 
 import json

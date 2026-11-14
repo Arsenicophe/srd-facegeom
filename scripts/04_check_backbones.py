@@ -1,13 +1,9 @@
-"""Étape 1b : vérifie que les deux backbones se chargent et se comportent bien.
+"""Étape 1b : vérifie les deux backbones sur quelques images de validation.
 
-Sur quelques images de VALIDATION, pour chaque backbone et chaque résolution :
-- sortie de forme (N, 2048), sans valeur infinie ou manquante ;
-- même entrée deux fois → même sortie (mode évaluation, déterminisme) ;
-- images différentes → vecteurs différents ;
-et pour le supervisé : sortie identique à celle du modèle torchvision officiel.
+Forme (N, 2048) finie, déterminisme, vecteurs distincts, et supervisé identique
+au modèle torchvision officiel.
 
     python scripts/04_check_backbones.py --zip /content/data/img_align_celeba.zip
-    python scripts/04_check_backbones.py --zip hf://datasets/Yuehao/celeba@<révision>/img_align_celeba.zip
 """
 
 import argparse

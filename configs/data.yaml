@@ -1,55 +1,30 @@
-# Données : source de CelebA et emplacements sur Google Drive.
-# Voir docs/protocole.md, section 3.
+# Données : CelebA, partition, recadrage. Détail : docs/protocole.md, section 3.
 
 drive_root: /content/drive/MyDrive/srd-facegeom
 
 celeba:
-  # Copie des fichiers d'origine sur Hugging Face, figée à une révision précise.
+  # Copie Hugging Face des fichiers d'origine, révision figée
   source:
     repo_id: Yuehao/celeba
     repo_type: dataset
     revision: 35ebb31405e9da028409199a494f2e77eb10f253
-  # Dossier de destination, relatif à drive_root.
-  dest_dir: data/celeba
-  # Empreintes MD5 des fichiers officiels, reprises de torchvision
-  # (torchvision.datasets.CelebA.file_list). Un fichier dont l'empreinte diffère
-  # est refusé.
+  dest_dir: data/celeba            # relatif à drive_root
+  # MD5 officiels (torchvision.datasets.CelebA) ; un fichier différent est refusé
   files:
     img_align_celeba.zip: 00d2c5bc6d35e252742224ab0c1e8fcb
     identity_CelebA.txt: 32bd1bd63d3c78cd57e08160ec5ed1e2
     list_eval_partition.txt: d32c9cbf5e040fd4025c592c306e6668
 
-# Partition par identité (étape 0f). Voir docs/protocole.md, section 3.
 splits:
-  # Découpage officiel de CelebA (list_eval_partition.txt) : 0, 1, 2.
-  names:
-    0: train
-    1: val
-    2: test
-  # Les identités avec moins de photos sont retirées de toutes les parties
-  # (lots 8 × 4 pour contrastive et triplet, mêmes données pour les 4 pertes).
-  min_images_per_identity: 4
-  # Dossier de sortie, relatif à la racine du dépôt (fichiers versionnés).
-  output_dir: splits
+  names: {0: train, 1: val, 2: test}  # codes de list_eval_partition.txt
+  min_images_per_identity: 4          # exigé par les lots 8 × 4, appliqué à toutes les parties
+  output_dir: splits                  # fichiers versionnés
 
-# Recadrage carré (étape 1a). Voir docs/protocole.md, section 3.
 crop:
-  # Positions moyennes mesurées sur list_landmarks_align_celeba.txt (202 599
-  # images, écart-type 1 à 2 px pour les yeux) : centre horizontal du visage
-  # et hauteur des yeux, en pixels de l'image alignée 178 × 218.
+  # Positions moyennes des repères CelebA (image alignée 178 × 218)
   center_x: 88.5
   eye_y: 111.2
-  # Hauteur relative des yeux dans le carré : 0,46, comme le gabarit 112 × 112
-  # d'ArcFace (yeux à y ≈ 51,6). Même placement pour toutes les tailles.
-  eye_rel: 0.46
-  # Tailles de carré candidates (côté en pixels), à comparer à l'œil.
+  eye_rel: 0.46                       # yeux à 46 % de la hauteur, comme le gabarit ArcFace
   candidate_sizes: [178, 150, 128, 100]
-  # Taille retenue après inspection de la planche (2026-11-09) : garde tout le
-  # visage (front au menton), retire l'essentiel de la coiffure et du fond.
-  # Boîte obtenue : (24, 52, 152, 180).
-  size: 128
-  # Planche d'inspection : images de VALIDATION uniquement (jamais le test).
-  sheet:
-    split: val
-    n_images: 10
-    seed: 0
+  size: 128                           # retenu le 2026-11-09 ; boîte (24, 52, 152, 180)
+  sheet: {split: val, n_images: 10, seed: 0}   # planche d'inspection, jamais le test

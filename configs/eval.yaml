@@ -1,44 +1,27 @@
-# Évaluation et mesures préalables (étape 2). Voir docs/protocole.md, section 5.
+# Mesures préalables et évaluation (étape 2). Détail : docs/protocole.md, section 5.
 
-# Vecteurs : dossier local (extraction faite sur le Mac). Sur Colab :
-# /content/drive/MyDrive/srd-facegeom/features
-features_root: features
+features_root: features             # local (Mac) ; sur Colab : /content/drive/MyDrive/srd-facegeom/features
 backbones: [resnet50_sup, resnet50_barlow]
 resolutions: [112, 224]
 
-# Étape 2 : ajustement sur l'entraînement, mesure sur la VALIDATION.
-# Le test n'est jamais lu à cette étape.
-fit_split: train
-eval_split: val
+fit_split: train                    # ajustement des projections
+eval_split: val                     # mesure ; le test n'est jamais lu ici
+dim: 128                            # commune à la tête, à la LDA et à l'ACP
+runs_dir: runs                      # un dossier par passage, jamais écrasé
 
-# Dimension commune à la tête, à la LDA et à la version réduite de la mesure brute
-dim: 128
+bootstrap: {n: 1000, seed: 0}       # sur les identités
 
-# Résultats : un dossier par passage, jamais écrasé
-runs_dir: runs
-
-bootstrap:
-  n: 1000
-  seed: 0
-
-# Vérification : toutes les paires « même personne », et un échantillon fixe
-# de paires « personnes différentes » (validé le 2026-11-09). Les mêmes paires
-# servent pour tous les backbones et toutes les pertes (comparaison appariée).
-verification:
+verification:                       # toutes les paires positives + échantillon fixe de négatives
   n_negative: 1000000
   seed: 0
   fars: [0.1, 0.01, 0.001]
 
-# Règle de décision de l'étape 2 (docs/protocole.md, section 5), fixée le
-# 2026-11-09 avant tout calcul. Seuils en points de MAP@R (%).
+# Règle de décision fixée le 2026-11-09 avant tout calcul (points de MAP@R, %)
 decision:
-  margin_comfortable: 5.0   # écart LDA − brut ≥ 5 : on continue
-  margin_minimum: 2.0       # écart < 2 : arrêt et discussion
-  lda_minimum: 5.0          # LDA < 5 % pour les deux backbones : arrêt
-  tie_breaker: resnet50_sup # backbone retenu si les deux sont « proches »
+  margin_comfortable: 5.0           # LDA − brut ≥ 5 : on continue
+  margin_minimum: 2.0               # < 2 : arrêt et discussion
+  lda_minimum: 5.0                  # LDA < 5 % pour les deux : arrêt
+  tie_breaker: resnet50_sup         # si les deux backbones sont « proches »
 
-# Résultat de la règle (étape 2e, runs/20261109-182200_2e_decision) :
-# backbone et résolution de l'expérience principale.
-selected:
-  backbone: resnet50_barlow
-  resolution: 224
+# Résultat de la règle (runs/20261109-182200_2e_decision)
+selected: {backbone: resnet50_barlow, resolution: 224}

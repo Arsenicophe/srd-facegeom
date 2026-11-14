@@ -18,7 +18,7 @@ personnes jamais vues ?
 | `src/facegeom/` | toute la logique (paquet Python) |
 | `scripts/` | scripts numérotés dans l'ordre d'exécution, orchestration seulement |
 | `configs/` | fichiers de configuration (aucune valeur en dur dans le code) |
-| `notebooks/` | notebooks Colab courts : montage de Drive, clone, lancement d'un script |
+| `notebooks/` | un notebook Colab : mise en place puis une cellule par étape |
 | `splits/` | listes d'identités par partition (versionnées) |
 | `tests/` | tests automatiques |
 
@@ -27,13 +27,10 @@ Google Drive, pas dans ce dépôt.
 
 ## Lancer sur Colab
 
-Chaque session commence par [`notebooks/00_demarrage_colab.ipynb`](notebooks/00_demarrage_colab.ipynb) :
-montage de Drive, récupération du code, installation, versions, et copie de
-CelebA si besoin.
-
-Ouvrir un notebook du dépôt dans Colab : Fichier → Ouvrir un notebook → onglet
-GitHub → `Arsenicophe/srd-facegeom`. Le dépôt est public : aucun jeton n'est
-nécessaire.
+Un seul notebook, [`notebooks/colab.ipynb`](notebooks/colab.ipynb) : la première
+cellule monte Drive, clone le dépôt et installe ce qui manque ; ensuite une
+cellule par étape. Ouvrir dans Colab : Fichier → Ouvrir un notebook → onglet
+GitHub → `Arsenicophe/srd-facegeom` (dépôt public, aucun jeton nécessaire).
 
 ### Dossier Drive
 

@@ -1,12 +1,7 @@
-"""Étapes 1d et 1e : extrait les vecteurs des deux backbones aux deux résolutions.
+"""Étapes 1d-1e : extraction des vecteurs, deux backbones × deux résolutions, reprise possible.
 
-Sortie : <drive_root>/features/<backbone>/<résolution>/<split>.npy (+ liste des
-images, + meta.json). Relancer reprend là où l'extraction s'est arrêtée.
-
-    # Essai (étape 1d) : 1 000 premières images de chaque partie, dossier à part
-    python scripts/05_extract_features.py --source /content/data/img_align_celeba --limit 1000
-    # Extraction complète (étape 1e)
-    python scripts/05_extract_features.py --source /content/data/img_align_celeba
+    python scripts/05_extract_features.py --source /content/data/img_align_celeba --limit 1000  # essai
+    python scripts/05_extract_features.py --source /content/data/img_align_celeba               # complet
 """
 
 import argparse

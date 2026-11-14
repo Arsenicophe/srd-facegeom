@@ -29,12 +29,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/eval.yaml")
     parser.add_argument("--data-config", default="configs/data.yaml")
+    parser.add_argument("--features-root", default=None, help="remplace features_root (Drive sur Colab)")
     parser.add_argument("--selected", action="store_true", help="backbone et résolution retenus seulement")
     parser.add_argument("--en", action="store_true", help="étiquettes en anglais, format compact")
     parser.add_argument("--fig", default=None, help="chemin de la figure (défaut : dans le run)")
     args = parser.parse_args()
 
     cfg = load_config(args.config)
+    cfg["features_root"] = args.features_root or cfg["features_root"]
     if cfg["eval_split"] == "test":
         raise SystemExit("L'étape 2 ne doit jamais utiliser le test.")
     split_dir = load_config(args.data_config)["splits"]["output_dir"]

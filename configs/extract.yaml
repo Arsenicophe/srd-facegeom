@@ -1,44 +1,28 @@
-# Extraction des vecteurs (étape 1). Voir docs/protocole.md, section 4.
+# Extraction des vecteurs (étape 1). Détail : docs/protocole.md, section 4.
 
-# Deux ResNet-50 torchvision, mêmes architecture et données ImageNet ;
-# seul l'objectif de pré-entraînement diffère. Poids téléchargés directement
-# et vérifiés par SHA-256 (pas de torch.hub.load).
+# Même architecture et mêmes données ImageNet ; seul l'objectif de pré-entraînement
+# diffère. Poids téléchargés directement et vérifiés par SHA-256.
 backbones:
   resnet50_sup:
     description: ResNet-50 supervisé ImageNet, torchvision IMAGENET1K_V1
     url: https://download.pytorch.org/models/resnet50-0676ba61.pth
     sha256: 0676ba61b6795bbe1773cffd859882e5e297624d384b6993f7c9e683e722fb8a
   resnet50_barlow:
-    description: ResNet-50 Barlow Twins (auto-supervisé ImageNet), checkpoint officiel facebookresearch/barlowtwins
+    description: ResNet-50 Barlow Twins, checkpoint officiel facebookresearch
     url: https://dl.fbaipublicfiles.com/barlowtwins/ep1000_bs2048_lrw0.2_lrb0.0048_lambd0.0051/resnet50.pth
     sha256: e00d00fcc75fc3b45f6707813973a7e9aefd546713d05a919fa209a9d4002114
 
-# Résolutions d'entrée : le carré recadré (configs/data.yaml, crop.size) est
-# redimensionné à chacune ; on garde celle dont la LDA est la meilleure en
-# validation (étape 2).
-resolutions: [112, 224]
+resolutions: [112, 224]             # tailles d'entrée après recadrage
 
-# Normalisation ImageNet standard, identique pour les deux backbones
-# (Barlow Twins a été entraîné avec la même).
-normalize:
+normalize:                          # ImageNet standard, identique pour les deux backbones
   mean: [0.485, 0.456, 0.406]
   std: [0.229, 0.224, 0.225]
 
-# Extraction (étape 1c).
 extraction:
   splits: [train, val, test]
-  # Dossier de sortie, relatif à drive_root (configs/data.yaml) :
-  # <output_dir>/<backbone>/<résolution>/<split>.npy
-  output_dir: features
-  # Les images sont traitées par morceaux ; chaque morceau est écrit sur Drive
-  # dès qu'il est fini, et une relance saute les morceaux déjà écrits.
-  chunk_size: 8192
+  output_dir: features              # relatif à drive_root : <output_dir>/<backbone>/<résolution>/
+  chunk_size: 8192                  # écrit par morceaux, reprise après coupure
   batch_size: 128
   num_workers: 2
-  # Stockage en demi-précision : suffisant pour des similarités cosinus,
-  # divise la place par deux (~0,8 Go par backbone et résolution).
-  storage_dtype: float16
-  # Calcul en float32 par défaut. Passer à true (float16 sur GPU) seulement si
-  # l'essai de l'étape 1d montre que c'est trop lent ; le même réglage vaut
-  # alors pour les deux backbones.
-  amp: false
+  storage_dtype: float16            # suffisant pour des cosinus, moitié moins de place
+  amp: false                        # calcul en float32

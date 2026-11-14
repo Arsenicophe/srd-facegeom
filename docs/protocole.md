@@ -310,13 +310,6 @@ anecdotique sur 10 requêtes :
   personne » ressemblent fortement à la requête. Possibles sosies ou erreurs
   d'étiquetage de CelebA, non vérifiables ici.
 
-### Planche des plus proches voisins
-
-Pour une dizaine d'images de validation, afficher les 5 plus proches voisins.
-**La regarder** : si les voisins sont la bonne personne, bien ; si ce sont des
-personnes différentes avec la même coiffure ou le même style de photo, le score
-mesure le style et non l'identité.
-
 ---
 
 ## 6. Les quatre fonctions de coût
@@ -562,3 +555,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Section 5 : constat de la planche des plus proches voisins |
 | 2026-11-09 | Vérification avant rédaction : P@1 corrigé (39,7 au lieu de 39,8), durée précisée, justification du seuil de 5 points corrigée (chiffres de Musgrave à 128 dimensions) |
 | 2026-11-14 | Code simplifié avant l'étape 3 : scripts 06, 07, 08 et 11 fusionnés en `06_baselines.py` (07 = décision, 08 = planche), modules utilitaires regroupés dans `facegeom/utils.py` et `facegeom/features.py`. Résultats inchangés |
+| 2026-11-14 | Commentaires et docstrings raccourcis, un seul notebook Colab (`notebooks/colab.ipynb`), `docs/archive/` supprimé |
