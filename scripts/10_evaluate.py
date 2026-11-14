@@ -10,7 +10,6 @@ il faut --final-test, toutes les pertes et graines, et aucun passage antérieur.
 """
 
 import argparse
-import json
 from itertools import combinations
 from pathlib import Path
 
@@ -23,30 +22,12 @@ from facegeom.eval.evaluate import evaluate, make_eval_pairs
 from facegeom.eval.stats import paired_diff, student_ci
 from facegeom.eval.verification import eer_threshold
 from facegeom.features import load_xy
-from facegeom.train import Head, embed
+from facegeom.train import embed, load_heads
 from facegeom.utils import load_config, new_run_dir, run_info, write_json
 
 METRICS = ["map_at_r", "p_at_1", "r_precision", "auc", "eer", "tar_at_far_0.1", "tar_at_far_0.01",
            "tar_at_far_0.001", "thr_balanced_acc", "alignment", "uniformity"]
 MARKER = "TEST_CONSULTED.json"
-
-
-def load_heads(run_dirs: list[str], tcfg: dict) -> dict[str, dict[int, Head]]:
-    """``{perte: {graine: tête}}`` à partir de dossiers ``4_final_<perte>``."""
-    heads: dict[str, dict[int, Head]] = {}
-    for d in map(Path, run_dirs):
-        meta = json.loads((d / "meta.json").read_text())
-        cfg, loss = meta["config"], meta["args"]["loss"]
-        if (cfg["backbone"], cfg["resolution"]) != (tcfg["backbone"], tcfg["resolution"]):
-            raise SystemExit(f"{d} : backbone ou résolution différents de la configuration.")
-        for sd in sorted(d.glob("seed*")):
-            seed = int(sd.name[4:])
-            if seed in heads.setdefault(loss, {}):
-                raise SystemExit(f"{loss} graine {seed} présente dans deux dossiers.")
-            head = Head(cfg["head"]["in_dim"], cfg["head"]["out_dim"])
-            head.load_state_dict(torch.load(sd / "head.pt", map_location="cpu", weights_only=True))
-            heads[loss][seed] = head
-    return heads
 
 
 def main() -> None:

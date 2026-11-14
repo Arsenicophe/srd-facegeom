@@ -6,8 +6,10 @@ lots sont des indices. Arrêt précoce sur le MAP@R de validation.
 
 from __future__ import annotations
 
+import json
 import random
 from collections.abc import Callable
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -127,3 +129,21 @@ def train(
             break
     return {"history": history, "best_epoch": best["epoch"], "best_map_at_r": best["map_at_r"],
             "head_state": best["state"], "n_classes": len(classes)}
+
+
+def load_heads(run_dirs: list[str], tcfg: dict) -> dict[str, dict[int, Head]]:
+    """``{perte: {graine: tête}}`` à partir de dossiers ``4_final_<perte>``."""
+    heads: dict[str, dict[int, Head]] = {}
+    for d in map(Path, run_dirs):
+        meta = json.loads((d / "meta.json").read_text())
+        cfg, loss = meta["config"], meta["args"]["loss"]
+        if (cfg["backbone"], cfg["resolution"]) != (tcfg["backbone"], tcfg["resolution"]):
+            raise SystemExit(f"{d} : backbone ou résolution différents de la configuration.")
+        for sd in sorted(d.glob("seed*")):
+            seed = int(sd.name[4:])
+            if seed in heads.setdefault(loss, {}):
+                raise SystemExit(f"{loss} graine {seed} présente dans deux dossiers.")
+            head = Head(cfg["head"]["in_dim"], cfg["head"]["out_dim"])
+            head.load_state_dict(torch.load(sd / "head.pt", map_location="cpu", weights_only=True))
+            heads[loss][seed] = head
+    return heads

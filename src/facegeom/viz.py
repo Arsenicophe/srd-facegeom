@@ -23,6 +23,24 @@ INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e6e5e1"
 
 GOOD, BAD = "#0ca30c", "#d03b3b"  # couleurs d'état, toujours avec ✓ / ✗
 
+# Une couleur et un marqueur par perte, toujours les mêmes (palette validée, emplacements 1 à 4)
+LOSS_STYLE = {"nsoftmax": ("#2a78d6", "o"), "arcface": ("#eb6834", "s"),
+              "contrastive": ("#1baf7a", "^"), "triplet": ("#eda100", "D")}
+REF_STYLE = {"brut_acp": ("#8a8984", "X"), "lda": ("#52514e", "P")}  # repères sans entraînement, en gris
+NAMES_FR = {"brut_acp": "brut (ACP 128)", "lda": "LDA 128"}
+NAMES_EN = {"brut_acp": "raw (PCA 128)", "lda": "LDA 128"}
+SURFACE = "#fcfcfb"
+
+
+def _style_axes(ax) -> None:
+    ax.grid(color=GRID, linewidth=0.8)
+    ax.set_axisbelow(True)
+    for side in ["top", "right"]:
+        ax.spines[side].set_visible(False)
+    for side in ["left", "bottom"]:
+        ax.spines[side].set_color(MUTED)
+    ax.tick_params(colors=MUTED, labelsize=8)
+
 
 def _save(fig, out_path: str | Path, dpi: int, facecolor: str | None = None) -> Path:
     out_path = Path(out_path)
@@ -73,7 +91,7 @@ EN_LABELS = {"diff": "different people", "same": "same person",
 
 def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int = 2,
                           labels: dict | None = None, panel_size=(5.2, 3.4),
-                          dpi: int = 150) -> Path:
+                          dpi: int = 150, sharey: bool = True) -> Path:
     """Petits multiples : pour chaque panneau, histogrammes superposés des similarités.
 
     Chaque panneau est un dict ``title``, ``same`` (scores des paires même
@@ -85,7 +103,7 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
     labels = labels or FR_LABELS
     nrows = (len(panels) + ncols - 1) // ncols
     fig, axes = plt.subplots(nrows, ncols, figsize=(panel_size[0] * ncols, panel_size[1] * nrows),
-                             sharex=True, sharey=True)
+                             sharex=True, sharey=sharey)
     axes = np.atleast_1d(axes).ravel()
     # Bornes communes couvrant toutes les données (aucune valeur coupée)
     lo = min(min(p["same"].min(), p["diff"].min()) for p in panels)
@@ -107,15 +125,17 @@ def similarity_histograms(panels: list[dict], out_path: str | Path, ncols: int =
             ax.spines[side].set_visible(False)
         for side in ["left", "bottom"]:
             ax.spines[side].set_color(MUTED)
-        ax.tick_params(colors=MUTED, labelsize=8)
+        ax.tick_params(colors=MUTED, labelsize=8, labelbottom=True)
     for ax in axes[len(panels):]:
         ax.set_visible(False)
-    for ax in axes[-ncols:]:
+    for ax in axes[max(len(panels) - ncols, 0):len(panels)]:  # dernier panneau de chaque colonne
         ax.set_xlabel(labels["x"], fontsize=9, color=MUTED)
     for ax in axes[::ncols]:
         ax.set_ylabel(labels["y"], fontsize=9, color=MUTED)
-    axes[0].legend(frameon=False, fontsize=8, loc="upper right")
-    fig.tight_layout()
+    # Légende au-dessus de la figure : elle ne recouvre jamais les courbes
+    handles, names = axes[0].get_legend_handles_labels()
+    fig.legend(handles, names, frameon=False, fontsize=9, ncol=2, loc="upper center")
+    fig.tight_layout(rect=(0, 0, 1, 1 - 0.32 / fig.get_figheight()))
     return _save(fig, out_path, dpi, "#fcfcfb")
 
 
@@ -153,3 +173,56 @@ def crop_contact_sheet(
         ax.set_yticks([])
     fig.tight_layout()
     return _save(fig, out_path, 130)
+
+
+def align_uniform_plane(per_seed, out_path: str | Path, en: bool = False, dpi: int = 200) -> Path:
+    """Plan alignement / uniformité : un petit point par graine, un gros par méthode (moyenne).
+
+    ``per_seed`` : tableau ``method, seed, alignment, uniformity`` (scripts/10_evaluate.py).
+    Les deux axes se lisent « plus bas = mieux » ; le coin bas-gauche est l'idéal.
+    """
+    names = NAMES_EN if en else NAMES_FR
+    fig, ax = plt.subplots(figsize=(5.6, 4.2))
+    for method, g in per_seed.groupby("method", sort=False):
+        color, marker = {**LOSS_STYLE, **REF_STYLE}.get(method, (MUTED, "o"))
+        if len(g) > 1:
+            ax.scatter(g.uniformity, g.alignment, s=14, color=color, marker=marker, alpha=0.45, linewidths=0)
+        x, y = g.uniformity.mean(), g.alignment.mean()
+        ax.scatter([x], [y], s=110, color=color, marker=marker, edgecolors=SURFACE, linewidths=1.2, zorder=3)
+        ax.annotate(names.get(method, method), (x, y), xytext=(8, 6), textcoords="offset points",
+                    fontsize=9, color=INK)
+    ax.set_xlabel("uniformity  (lower = more spread out)" if en else "uniformité  (plus bas = mieux répartis)",
+                  fontsize=9, color=MUTED)
+    ax.set_ylabel("alignment  (lower = same person closer)" if en
+                  else "alignement  (plus bas = même personne plus proche)", fontsize=9, color=MUTED)
+    _style_axes(ax)
+    ax.margins(0.18)
+    fig.tight_layout()
+    return _save(fig, out_path, dpi, SURFACE)
+
+
+def metric_intervals(summary, metric: str, out_path: str | Path, xlabel: str, en: bool = False,
+                     dpi: int = 200) -> Path:
+    """Un point par méthode (moyenne sur les graines) avec son IC à 95 % ; repères en gris.
+
+    ``summary`` : tableau ``method, metric, mean, ci_low, ci_high`` (scripts/10_evaluate.py).
+    """
+    names = NAMES_EN if en else NAMES_FR
+    rows = summary[summary.metric == metric].reset_index(drop=True)
+    fig, ax = plt.subplots(figsize=(5.6, 0.5 * len(rows) + 1.0))
+    for i, r in rows.iterrows():
+        color, marker = {**LOSS_STYLE, **REF_STYLE}.get(r.method, (MUTED, "o"))
+        y = len(rows) - 1 - i
+        if r.ci_low == r.ci_low:  # pas NaN : au moins 2 graines
+            ax.plot([r.ci_low, r.ci_high], [y, y], color=color, linewidth=2, solid_capstyle="round")
+        ax.scatter([r["mean"]], [y], s=90, color=color, marker=marker, edgecolors=SURFACE, linewidths=1.2, zorder=3)
+        ax.annotate(f"{r['mean']:.1f}", (r["mean"], y), xytext=(0, 9), textcoords="offset points",
+                    ha="center", fontsize=8, color=INK)
+    ax.set_yticks(range(len(rows)))
+    ax.set_yticklabels([names.get(m, m) for m in rows.method[::-1]], fontsize=9, color=INK)
+    ax.set_ylim(-0.6, len(rows) - 0.3)
+    ax.set_xlabel(xlabel, fontsize=9, color=MUTED)
+    _style_axes(ax)
+    ax.grid(axis="y", visible=False)
+    fig.tight_layout()
+    return _save(fig, out_path, dpi, SURFACE)

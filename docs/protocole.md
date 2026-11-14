@@ -570,3 +570,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-14 | Étape 3 préparée : `configs/train.yaml`, `facegeom/train.py`, `scripts/09_train.py` (réglage et graines finales), tests ; marge ArcFace en radians (pytorch-metric-learning 3.x) |
 | 2026-11-14 | Section 8 : budget de réglage ramené de 10 à 5 configurations par perte, après mesure du temps d'une époque |
 | 2026-11-15 | Section 10 : calcul de l'alignement et de l'uniformité précisé ; seuil de vérification = point d'égale erreur sur la validation [à valider]. Code : `facegeom/eval/stats.py`, `facegeom/eval/evaluate.py`, `scripts/10_evaluate.py` (garde du test : une seule évaluation) |
+| 2026-11-15 | Figures de l'évaluation : `scripts/11_figures.py` (histogrammes brut, LDA et pertes ; plan alignement / uniformité ; MAP@R et TAR avec IC) ; planche des voisins étendue aux têtes (`scripts/08_neighbors_sheet.py --runs`) |

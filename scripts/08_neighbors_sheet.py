@@ -3,17 +3,20 @@
 Visages CelebA : reste dans runs/, non versionné.
 
     python scripts/08_neighbors_sheet.py --zip data/celeba/img_align_celeba.zip
+    python scripts/08_neighbors_sheet.py --zip ... --runs runs/<date>_4_final_arcface ...   # + têtes, graine 0
 """
 
 import argparse
 
 import numpy as np
+import torch
 
 from facegeom.data.crop import crop_box, crop_face
 from facegeom.data.images import open_celeba_zip, read_image
 from facegeom.eval.baselines import apply_projection, fit_lda, fit_pca
 from facegeom.eval.retrieval import l2_normalize
 from facegeom.features import load_xy
+from facegeom.train import embed, load_heads
 from facegeom.utils import load_config, new_run_dir, run_info, write_json
 from facegeom.viz import neighbors_sheet
 
@@ -24,6 +27,8 @@ def main() -> None:
     parser.add_argument("--data-config", default="configs/data.yaml")
     parser.add_argument("--features-root", default=None, help="remplace features_root (Drive sur Colab)")
     parser.add_argument("--zip", required=True)
+    parser.add_argument("--runs", nargs="*", default=[], help="dossiers 4_final_<perte> : ajoute chaque perte")
+    parser.add_argument("--train-config", default="configs/train.yaml")
     parser.add_argument("--n-queries", type=int, default=10)
     parser.add_argument("--k", type=int, default=5)
     parser.add_argument("--seed", type=int, default=0)
@@ -42,6 +47,9 @@ def main() -> None:
         "brut (ACP 128)": apply_projection(fit_pca(xtr, cfg["dim"]), xva),
         "LDA 128": apply_projection(fit_lda(xtr, ytr, cfg["dim"]), xva),
     }
+    for loss, by_seed in load_heads(args.runs, load_config(args.train_config)).items():
+        seed = min(by_seed)
+        variants[f"{loss} (graine {seed})"] = embed(by_seed[seed], torch.as_tensor(xva))
 
     # Requêtes : une image par identité, identités tirées au hasard
     rng = np.random.default_rng(args.seed)
@@ -68,9 +76,8 @@ def main() -> None:
             n_ok += sum(ok)
             rows.append({"query": img(q), "neighbors": [img(j) for j in nn],
                          "correct": ok, "sims": [float(sims[j]) for j in nn]})
-        tag = "lda" if v.startswith("LDA") else "brut"
-        neighbors_sheet(rows, out / f"planche_{tag}.png",
-                        f"Barlow Twins 224 px, {v} — validation, {args.k} plus proches voisins")
+        neighbors_sheet(rows, out / f"planche_{v.split()[0].lower()}.png",
+                        f"{b} {r} px, {v} — validation, {args.k} plus proches voisins")
         summary[v] = f"{n_ok}/{len(queries) * args.k} voisins de la bonne personne"
         print(f"{v:15} : {summary[v]}")
 
