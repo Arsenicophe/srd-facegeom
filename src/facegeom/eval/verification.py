@@ -56,6 +56,19 @@ def eer(y: np.ndarray, scores: np.ndarray) -> float:
     return float((fpr[i] + fnr[i]) / 2)
 
 
+def eer_threshold(y: np.ndarray, scores: np.ndarray) -> float:
+    """Seuil de similarité au point d'égale erreur."""
+    fpr, tpr, thr = roc_curve(y, scores)
+    return float(thr[int(np.argmin(np.abs(fpr - (1 - tpr))))])
+
+
+def rates_at_threshold(y: np.ndarray, scores: np.ndarray, threshold: float) -> dict[str, float]:
+    """TAR, FAR et exactitude équilibrée (en %) à un seuil fixé ailleurs (sur la validation)."""
+    accept = scores >= threshold
+    tar, far = float(accept[y == 1].mean()), float(accept[y == 0].mean())
+    return {"thr_tar": 100 * tar, "thr_far": 100 * far, "thr_balanced_acc": 100 * (tar + 1 - far) / 2}
+
+
 def verification_summary(y: np.ndarray, scores: np.ndarray, fars: tuple[float, ...] = (1e-1, 1e-2, 1e-3)) -> dict:
     """AUC, EER et TAR aux FAR demandés, en pourcentage."""
     n_neg = int((y == 0).sum())

@@ -16,6 +16,8 @@ verification:                       # toutes les paires positives + échantillon
   seed: 0
   fars: [0.1, 0.01, 0.001]
 
+uniformity: {n_pairs: 1000000, seed: 0, t: 2}   # paires au hasard, Wang & Isola (t = 2)
+
 # Règle de décision fixée le 2026-11-09 avant tout calcul (points de MAP@R, %)
 decision:
   margin_comfortable: 5.0           # LDA − brut ≥ 5 : on continue

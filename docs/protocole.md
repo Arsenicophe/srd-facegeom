@@ -440,7 +440,10 @@ vérification.
 **Vérification** — présentée en premier :
 - courbe ROC et aire sous la courbe ;
 - **TAR à FAR = 10⁻¹, 10⁻², 10⁻³** ;
-- précision au seuil choisi **sur la validation**.
+- précision au seuil choisi **sur la validation**. **[à valider]** Seuil = point
+  d'égale erreur sur les paires de validation ; on rapporte au test le TAR, le
+  FAR et l'**exactitude équilibrée** (moyenne de TAR et 1 − FAR) à ce seuil. Le
+  seuil est choisi séparément pour chaque tête.
 
 Paires : toutes les paires positives, et un échantillon fixe de
 **1 000 000 de paires négatives** tirées avec la graine 0 (validé le
@@ -462,6 +465,8 @@ affirme moins que leur nombre ne le laisse croire.
   $\mathcal{L}_{\text{unif}} = \log \mathbb{E}_{x,y}\, e^{-2\lVert f(x)-f(y) \rVert_2^2}$.
   Chaque perte devient un point dans un plan. Descriptif seulement pour les pertes
   à marge (section 13).
+  Calcul : alignement sur toutes les paires positives ; uniformité sur
+  1 000 000 de paires d'images tirées au hasard (graine 0), avec *t* = 2.
 
 **Planche des plus proches voisins** sur les modèles finaux, comme en section 5.
 
@@ -564,3 +569,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-14 | Commentaires et docstrings raccourcis, un seul notebook Colab (`notebooks/colab.ipynb`), `docs/archive/` supprimé |
 | 2026-11-14 | Étape 3 préparée : `configs/train.yaml`, `facegeom/train.py`, `scripts/09_train.py` (réglage et graines finales), tests ; marge ArcFace en radians (pytorch-metric-learning 3.x) |
 | 2026-11-14 | Section 8 : budget de réglage ramené de 10 à 5 configurations par perte, après mesure du temps d'une époque |
+| 2026-11-15 | Section 10 : calcul de l'alignement et de l'uniformité précisé ; seuil de vérification = point d'égale erreur sur la validation [à valider]. Code : `facegeom/eval/stats.py`, `facegeom/eval/evaluate.py`, `scripts/10_evaluate.py` (garde du test : une seule évaluation) |
