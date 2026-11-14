@@ -330,8 +330,10 @@ anecdotique sur 10 requêtes :
   n'apprend.
 - Implémentation : bibliothèque **pytorch-metric-learning** (Musgrave), pour
   éviter quatre implémentations maison de qualité inégale.
-  **[à valider]** Attention : dans cette bibliothèque, la marge d'ArcFace est en
-  **degrés** et la softmax normalisée prend une température (*s* = 1 / température).
+  Version **3.x** imposée (`pyproject.toml`) : la marge d'ArcFace y est en
+  **radians** (c'était des degrés avant la 3.0) et la softmax normalisée prend
+  une température (*s* = 1 / température). Vérifié par un test : ArcFace avec
+  *m* = 0 donne exactement la même perte que `nsoftmax`.
 
 ---
 
@@ -362,8 +364,9 @@ anecdotique sur 10 requêtes :
 
 ### Plages
 
-**[à valider]** À revérifier contre les valeurs par défaut de
-pytorch-metric-learning avant de les figer.
+Valeurs par défaut de pytorch-metric-learning 3.x, pour situer les plages :
+ArcFace *s* = 64 et *m* = 0,5 rad ; contrastive marge négative 1 ; triplet
+marge 0,2 ; nsoftmax température 0,05 (*s* = 20). Les plages les encadrent.
 
 | Perte | Paramètre | Plage |
 |---|---|---|
@@ -556,3 +559,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-09 | Vérification avant rédaction : P@1 corrigé (39,7 au lieu de 39,8), durée précisée, justification du seuil de 5 points corrigée (chiffres de Musgrave à 128 dimensions) |
 | 2026-11-14 | Code simplifié avant l'étape 3 : scripts 06, 07, 08 et 11 fusionnés en `06_baselines.py` (07 = décision, 08 = planche), modules utilitaires regroupés dans `facegeom/utils.py` et `facegeom/features.py`. Résultats inchangés |
 | 2026-11-14 | Commentaires et docstrings raccourcis, un seul notebook Colab (`notebooks/colab.ipynb`), `docs/archive/` supprimé |
+| 2026-11-14 | Étape 3 préparée : `configs/train.yaml`, `facegeom/train.py`, `scripts/09_train.py` (réglage et graines finales), tests ; marge ArcFace en radians (pytorch-metric-learning 3.x) |

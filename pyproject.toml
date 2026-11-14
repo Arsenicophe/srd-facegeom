@@ -21,7 +21,7 @@ dependencies = [
     "tqdm",
     "torch",
     "torchvision",
-    "pytorch-metric-learning",
+    "pytorch-metric-learning>=3.0,<4",  # 3.x : marge ArcFace en radians
     "huggingface_hub",
 ]
 

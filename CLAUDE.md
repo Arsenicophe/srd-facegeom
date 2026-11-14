@@ -106,6 +106,7 @@ même graine, même résultat.
       envoi sur Drive à faire)
 - [x] Étape 2 : mesures préalables → **Barlow Twins, 224 px** (protocole, section 5),
       planche des voisins faite
+- [x] Code de l'étape 3 prêt (`scripts/09_train.py`, `configs/train.yaml`), testé 2 époques sur le Mac
 - [ ] Étapes 3 à 5 : réglage, entraînements finaux, test
 
 Mettre cette liste à jour quand une étape est terminée.

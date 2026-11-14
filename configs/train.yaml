@@ -1,0 +1,26 @@
+# Entraînement de la tête (étapes 3 et 4). Détail : docs/protocole.md, sections 6 à 9.
+
+features_root: features             # local (Mac) ; sur Colab : /content/drive/MyDrive/srd-facegeom/features
+backbone: resnet50_barlow           # retenu à l'étape 2
+resolution: 224
+fit_split: train
+eval_split: val                     # arrêt précoce et réglage ; le test n'est jamais lu ici
+runs_dir: runs
+
+head: {in_dim: 2048, out_dim: 128}  # une couche linéaire puis normalisation L2
+optimizer: rmsprop                  # le même pour les 4 pertes, un seul taux d'apprentissage
+batch_size: 32
+max_epochs: 50
+patience: 5                         # époques sans progrès du MAP@R validation
+eval_every: 1
+
+tune: {n_trials: 10, seed: 100}     # tirage au hasard dans les plages, même budget par perte
+seeds: [0, 1, 2, 3, 4]              # entraînements finaux
+
+# Plages de réglage ([min, max] linéaire, [min, max, log] logarithmique).
+# pytorch-metric-learning 3.x : marge ArcFace en radians, nsoftmax prend 1/s.
+losses:
+  nsoftmax:    {m_per_class: 1, params: {lr: [1.0e-5, 1.0e-2, log], s: [8, 64]}}
+  arcface:     {m_per_class: 1, params: {lr: [1.0e-5, 1.0e-2, log], s: [8, 64], m: [0.1, 0.6]}}
+  contrastive: {m_per_class: 4, params: {lr: [1.0e-5, 1.0e-2, log], neg_margin: [0.3, 1.5]}}
+  triplet:     {m_per_class: 4, params: {lr: [1.0e-5, 1.0e-2, log], margin: [0.01, 0.5]}}
