@@ -31,12 +31,14 @@ def main() -> None:
     parser.add_argument("--params-from", default=None, help="best.json d'un run de réglage")
     parser.add_argument("--seeds", type=int, nargs="*", default=None, help="défaut : seeds de la config")
     parser.add_argument("--features-root", default=None)
+    parser.add_argument("--runs-dir", default=None, help="remplace runs_dir (Drive sur Colab)")
     parser.add_argument("--max-epochs", type=int, default=None, help="essai court")
     parser.add_argument("--device", default=default_device())
     args = parser.parse_args()
 
     cfg = load_config(args.config)
     cfg["features_root"] = args.features_root or cfg["features_root"]
+    cfg["runs_dir"] = args.runs_dir or cfg["runs_dir"]
     cfg["max_epochs"] = args.max_epochs or cfg["max_epochs"]
     if "test" in (cfg["fit_split"], cfg["eval_split"]):
         raise SystemExit("L'entraînement ne doit jamais lire le test.")
