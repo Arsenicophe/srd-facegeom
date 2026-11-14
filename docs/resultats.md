@@ -126,7 +126,7 @@ CelebA : pas de redistribution).
   valeurs sous −0,2 ; supprimé et refait, chiffres identiques.
 - **Écarts assumés à Musgrave** : backbone gelé (pas de fine-tuning), pas
   d'augmentation, un seul découpage de validation (pas de validation croisée),
-  10 essais aléatoires au lieu de 50 bayésiens, 5 graines au lieu de 10, 4
+  5 essais aléatoires au lieu de 50 bayésiens, 5 graines au lieu de 10, 4
   pertes au lieu de 13.
 
 ## 5. Limites déjà visibles

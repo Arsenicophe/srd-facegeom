@@ -66,7 +66,7 @@ Aucun entraînement de perte avant d'avoir les résultats de l'étape 2.
 | Chez Musgrave | Chez nous | Raison |
 |---|---|---|
 | Fine-tuning du réseau entier + augmentation | Réseau gelé, vecteurs pré-calculés | Simplicité, coût |
-| 50 essais bayésiens par perte | 10 essais tirés au hasard | Suffisant à notre échelle |
+| 50 essais bayésiens par perte | 5 essais tirés au hasard | Budget de calcul (Colab gratuit) |
 | Validation croisée à 4 plis | Un seul découpage entraînement / validation | 4 fois moins de calcul |
 | 10 relances | 5 graines | Compromis coût / précision |
 | 13 pertes | 4 pertes | On garde celles qui comptent |
@@ -357,9 +357,10 @@ anecdotique sur 10 requêtes :
 ## 8. Réglage des paramètres
 
 - **Méthode** : tirage au hasard dans des plages **fixées avant tout lancement**.
-- **Budget** : **10 configurations par perte**, toutes avec la graine de réglage
-  **100**. Ajustable si la mesure du temps montre que c'est trop long, mais le
-  même nombre pour chaque perte.
+- **Budget** : **5 configurations par perte**, toutes avec la graine de réglage
+  **100**. Fixé à 5 le 2026-11-14 (10 au départ) après mesure du temps : 36 à
+  64 s par époque sur le Mac, soit 10 à 15 min par run. Même nombre pour chaque
+  perte.
 - **Critère** : meilleur **MAP@R en validation**.
 
 ### Plages
@@ -538,8 +539,10 @@ Mêmes partitions, même recadrage, mêmes métriques.
 - LBP comparé par khi-deux, pas par cosinus.
 
 **Sur les écarts à Musgrave**
-- Un seul découpage de validation au lieu de 4 plis, 10 essais au hasard au lieu
+- Un seul découpage de validation au lieu de 4 plis, 5 essais au hasard au lieu
   de 50 bayésiens, 5 graines au lieu de 10, réseau gelé au lieu de fine-tuning.
+  Avec 5 essais, les plages sont peu explorées : une perte peut être
+  désavantagée par le hasard du tirage, surtout `arcface` (3 paramètres).
 
 ---
 
@@ -560,3 +563,4 @@ Mêmes partitions, même recadrage, mêmes métriques.
 | 2026-11-14 | Code simplifié avant l'étape 3 : scripts 06, 07, 08 et 11 fusionnés en `06_baselines.py` (07 = décision, 08 = planche), modules utilitaires regroupés dans `facegeom/utils.py` et `facegeom/features.py`. Résultats inchangés |
 | 2026-11-14 | Commentaires et docstrings raccourcis, un seul notebook Colab (`notebooks/colab.ipynb`), `docs/archive/` supprimé |
 | 2026-11-14 | Étape 3 préparée : `configs/train.yaml`, `facegeom/train.py`, `scripts/09_train.py` (réglage et graines finales), tests ; marge ArcFace en radians (pytorch-metric-learning 3.x) |
+| 2026-11-14 | Section 8 : budget de réglage ramené de 10 à 5 configurations par perte, après mesure du temps d'une époque |

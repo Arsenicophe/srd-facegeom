@@ -14,7 +14,7 @@ max_epochs: 50
 patience: 5                         # époques sans progrès du MAP@R validation
 eval_every: 1
 
-tune: {n_trials: 10, seed: 100}     # tirage au hasard dans les plages, même budget par perte
+tune: {n_trials: 5, seed: 100}      # tirage au hasard dans les plages, même budget par perte
 seeds: [0, 1, 2, 3, 4]              # entraînements finaux
 
 # Plages de réglage ([min, max] linéaire, [min, max, log] logarithmique).

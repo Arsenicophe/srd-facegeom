@@ -3,7 +3,7 @@
 Un dossier par run dans runs/, jamais écrasé : configuration, paramètres,
 historique par époque, meilleure tête (head.pt). Validation seulement.
 
-    python scripts/09_train.py --loss arcface --tune                      # 10 tirages, graine 100
+    python scripts/09_train.py --loss arcface --tune                      # 5 tirages, graine 100 
     python scripts/09_train.py --loss arcface --params-from runs/<tune>/best.json --seeds 0 1 2 3 4
     python scripts/09_train.py --loss arcface --params '{"lr": 1e-3, "s": 32, "m": 0.3}' --seeds 0
 """
