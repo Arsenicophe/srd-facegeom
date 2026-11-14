@@ -7,11 +7,11 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.patches as mpatches  # noqa: E402
-import matplotlib.pyplot as plt  # noqa: E402
-from PIL import Image  # noqa: E402
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+from PIL import Image
 
-from facegeom.data.crop import crop_box, crop_face  # noqa: E402
+from facegeom.data.crop import crop_box, crop_face
 
 COLORS = ["tab:red", "tab:orange", "tab:green", "tab:blue", "tab:purple"]
 
@@ -130,7 +130,7 @@ def crop_contact_sheet(
     Les recadrages sont tous affichés à ``display_px`` pour comparer le contenu,
     pas la résolution.
     """
-    boxes = [crop_box(s, crop_cfg["center_x"], crop_cfg["eye_y"], crop_cfg["eye_rel"]) for s in sizes]
+    boxes = [crop_box(crop_cfg, s) for s in sizes]
     n = len(images)
     fig, axes = plt.subplots(n, len(sizes) + 1, figsize=(1.6 * (len(sizes) + 1), 1.9 * n))
     for i, img in enumerate(images):

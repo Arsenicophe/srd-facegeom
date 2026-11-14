@@ -6,9 +6,9 @@ import pytest
 import torch
 from PIL import Image
 
-from facegeom.config import load_config
 from facegeom.data.crop import crop_box, crop_face
 from facegeom.data.transforms import build_transform
+from facegeom.utils import load_config
 
 ROOT = Path(__file__).resolve().parents[1]
 CROP = load_config(ROOT / "configs" / "data.yaml")["crop"]
@@ -17,13 +17,13 @@ EXTRACT = load_config(ROOT / "configs" / "extract.yaml")
 
 @pytest.mark.parametrize("size", [100, 128, 150, 178])
 def test_crop_box_is_square_and_inside_image(size):
-    l, t, r, b = crop_box(size, CROP["center_x"], CROP["eye_y"], CROP["eye_rel"])
+    l, t, r, b = crop_box(CROP, size)
     assert r - l == size and b - t == size
     assert 0 <= l and 0 <= t and r <= 178 and b <= 218
 
 
 def test_chosen_crop_box():
-    box = crop_box(CROP["size"], CROP["center_x"], CROP["eye_y"], CROP["eye_rel"])
+    box = crop_box(CROP)
     assert box == (24, 52, 152, 180)
     # Les yeux tombent à ~46 % de la hauteur du carré
     assert abs((CROP["eye_y"] - box[1]) / CROP["size"] - CROP["eye_rel"]) < 0.01

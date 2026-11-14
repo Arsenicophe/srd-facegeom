@@ -7,8 +7,8 @@
 
 import argparse
 
-from facegeom.config import load_config
 from facegeom.data.download import download_celeba
+from facegeom.utils import load_config
 
 
 def main() -> None:

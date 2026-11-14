@@ -7,7 +7,6 @@ from facegeom.eval.bootstrap import bootstrap_diff
 from facegeom.eval.retrieval import ap_at_r, nearest_neighbors, retrieval_per_query, summarize
 from facegeom.eval.verification import make_pairs, pair_scores, tar_at_far, verification_summary
 
-
 # --- MAP@R : exemples chiffrés du tableau 3 de Musgrave et al. (2020) -----
 
 @pytest.mark.parametrize(

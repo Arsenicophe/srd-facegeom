@@ -33,7 +33,7 @@ class CenteredLDA:
     def __init__(self, dim: int):
         self.dim = dim
 
-    def fit(self, x: np.ndarray, y: np.ndarray) -> "CenteredLDA":
+    def fit(self, x: np.ndarray, y: np.ndarray) -> CenteredLDA:
         """Même calcul que ``LinearDiscriminantAnalysis(solver="eigen")`` de
         scikit-learn, mais les matrices de dispersion sont obtenues par deux
         produits de matrices au lieu d'une covariance par classe (7 689 classes

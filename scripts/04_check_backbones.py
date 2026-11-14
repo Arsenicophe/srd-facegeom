@@ -17,11 +17,11 @@ import pandas as pd
 import torch
 import torch.nn.functional as F
 
-from facegeom.config import load_config
-from facegeom.device import default_device
 from facegeom.data.images import open_celeba_zip, read_image
 from facegeom.data.transforms import build_transform
-from facegeom.models.backbones import FEATURE_DIM, load_backbone
+from facegeom.features import DIM
+from facegeom.models.backbones import load_backbone
+from facegeom.utils import default_device, load_config
 
 
 def main() -> None:
@@ -58,7 +58,7 @@ def main() -> None:
                 dt = time.perf_counter() - t
                 f2 = model(x)
 
-            assert f1.shape == (len(images), FEATURE_DIM), f1.shape
+            assert f1.shape == (len(images), DIM), f1.shape
             assert torch.isfinite(f1).all(), "valeurs infinies ou manquantes"
             assert torch.equal(f1, f2), "même entrée, sorties différentes"
             z = F.normalize(f1.float(), dim=1)

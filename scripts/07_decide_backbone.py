@@ -1,9 +1,8 @@
 """Étape 2e : applique la règle de décision (protocole, section 5) aux résultats de l'étape 2d.
 
-Ne recalcule rien : lit les MAP@R par requête enregistrés par
-scripts/08_lda_reference.py.
+Ne recalcule rien : lit les MAP@R par requête enregistrés par scripts/06_baselines.py.
 
-    python scripts/09_decide_backbone.py --run runs/<date>_2d_reference_lda
+    python scripts/07_decide_backbone.py --run runs/<date>_2d_baselines
 """
 
 import argparse
@@ -11,10 +10,8 @@ from pathlib import Path
 
 import numpy as np
 
-from facegeom.config import load_config
 from facegeom.eval.bootstrap import bootstrap_diff
-from facegeom.results import new_run_dir, write_json
-from facegeom.runinfo import run_info
+from facegeom.utils import load_config, new_run_dir, run_info, write_json
 
 
 def main() -> None:

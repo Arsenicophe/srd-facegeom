@@ -16,15 +16,11 @@ from pathlib import Path
 import pandas as pd
 import torch
 
-from facegeom.config import load_config
-from facegeom.device import default_device
 from facegeom.data.crop import crop_box
-from facegeom.data.download import md5sum
 from facegeom.data.transforms import build_transform
-from facegeom.features.extract import extract_split, write_meta
-from facegeom.features.store import feature_dir
+from facegeom.features import extract_split, feature_dir, write_meta
 from facegeom.models.backbones import load_backbone
-from facegeom.runinfo import run_info
+from facegeom.utils import default_device, file_hash, load_config, run_info
 
 
 def main() -> None:
@@ -78,9 +74,9 @@ def main() -> None:
         for r in ext_cfg["resolutions"]:
             write_meta(feature_dir(out_root, b, r), {
                 "backbone": b, "weights": bcfg, "resolution": r,
-                "crop_box": crop_box(c["size"], c["center_x"], c["eye_y"], c["eye_rel"]),
+                "crop_box": crop_box(c),
                 "normalize": ext_cfg["normalize"], "extraction": ecfg, "limit": args.limit,
-                "splits_md5": {s: md5sum(split_dir / f"{s}.csv") for s in ecfg["splits"]},
+                "splits_md5": {s: file_hash(split_dir / f"{s}.csv") for s in ecfg["splits"]},
                 "timings": timings, "run": run_info(args.device),
             })
     print("Vecteurs dans", out_root)

@@ -10,9 +10,8 @@ Colab comme en local.
 import argparse
 from pathlib import Path
 
-from facegeom.config import load_config
-from facegeom.data.download import md5sum
 from facegeom.data.splits import build_splits, write_splits
+from facegeom.utils import file_hash, load_config
 
 
 def main() -> None:
@@ -33,7 +32,7 @@ def main() -> None:
     partition = data_dir / "list_eval_partition.txt"
     expected = cfg["celeba"]["files"]
     for p in (identity, partition):
-        if md5sum(p) != expected[p.name]:
+        if file_hash(p) != expected[p.name]:
             raise SystemExit(f"{p} : empreinte inattendue, relancer l'étape 0e.")
 
     df, summary = build_splits(

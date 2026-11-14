@@ -5,22 +5,19 @@ affiche les k plus proches voisins avec le backbone retenu, en brut (ACP 128)
 puis après LDA. Les images montrées sont les recadrages vus par le réseau.
 La planche contient des visages CelebA : elle reste dans runs/ (non versionné).
 
-    python scripts/10_neighbors_sheet.py --zip data/celeba/img_align_celeba.zip
+    python scripts/08_neighbors_sheet.py --zip data/celeba/img_align_celeba.zip
 """
 
 import argparse
 
 import numpy as np
-import pandas as pd
 
-from facegeom.config import load_config
 from facegeom.data.crop import crop_box, crop_face
 from facegeom.data.images import open_celeba_zip, read_image
 from facegeom.eval.baselines import apply_projection, fit_lda, fit_pca
 from facegeom.eval.retrieval import l2_normalize
-from facegeom.features.store import load_features
-from facegeom.results import new_run_dir, write_json
-from facegeom.runinfo import run_info
+from facegeom.features import load_xy
+from facegeom.utils import load_config, new_run_dir, run_info, write_json
 from facegeom.viz import neighbors_sheet
 
 
@@ -40,17 +37,11 @@ def main() -> None:
         raise SystemExit("La planche ne doit jamais utiliser le test.")
     b, r = cfg["selected"]["backbone"], cfg["selected"]["resolution"]
     split_dir = dcfg["splits"]["output_dir"]
-    tr_lab = pd.read_csv(f"{split_dir}/{cfg['fit_split']}.csv").set_index("image").identity
-    va_lab = pd.read_csv(f"{split_dir}/{cfg['eval_split']}.csv").set_index("image").identity
-
-    train, tr_names = load_features(cfg["features_root"], b, r, cfg["fit_split"])
-    val, names = load_features(cfg["features_root"], b, r, cfg["eval_split"])
-    train = np.asarray(train)
-    yval = va_lab.loc[names].to_numpy()
+    xtr, ytr, _ = load_xy(cfg["features_root"], b, r, cfg["fit_split"], split_dir)
+    xva, yval, names = load_xy(cfg["features_root"], b, r, cfg["eval_split"], split_dir)
     variants = {
-        "brut (ACP 128)": apply_projection(fit_pca(train, cfg["dim"]), np.asarray(val)),
-        "LDA 128": apply_projection(fit_lda(train, tr_lab.loc[tr_names].to_numpy(), cfg["dim"]),
-                                    np.asarray(val)),
+        "brut (ACP 128)": apply_projection(fit_pca(xtr, cfg["dim"]), xva),
+        "LDA 128": apply_projection(fit_lda(xtr, ytr, cfg["dim"]), xva),
     }
 
     # Requêtes : une image par identité, identités tirées au hasard
@@ -59,7 +50,7 @@ def main() -> None:
     queries = [int(rng.choice(np.flatnonzero(yval == i))) for i in ids]
 
     c = dcfg["crop"]
-    box = crop_box(c["size"], c["center_x"], c["eye_y"], c["eye_rel"])
+    box = crop_box(c)
     zf = open_celeba_zip(args.zip)
 
     def img(i):

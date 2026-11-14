@@ -14,8 +14,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from facegeom.config import load_config
 from facegeom.data.splits import IdentityOverlapError, check_disjoint, filter_min_images
+from facegeom.utils import load_config
 
 ROOT = Path(__file__).resolve().parents[1]
 CFG = load_config(ROOT / "configs" / "data.yaml")["splits"]

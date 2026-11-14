@@ -78,7 +78,7 @@ def build_splits(
 
     def stats(d: pd.DataFrame) -> dict:
         return {
-            s: {"identities": int(g.identity.nunique()), "images": int(len(g))}
+            s: {"identities": int(g.identity.nunique()), "images": len(g)}
             for s, g in d.groupby("split")
         }
 

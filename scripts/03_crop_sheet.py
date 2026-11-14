@@ -14,8 +14,8 @@ import argparse
 
 import pandas as pd
 
-from facegeom.config import load_config
 from facegeom.data.images import open_celeba_zip, read_image
+from facegeom.utils import load_config
 from facegeom.viz import crop_contact_sheet
 
 

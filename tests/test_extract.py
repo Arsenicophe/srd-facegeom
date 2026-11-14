@@ -10,8 +10,7 @@ import torch
 from PIL import Image
 from torch import nn
 
-from facegeom.features.extract import extract_split
-from facegeom.features.store import feature_dir, load_features
+from facegeom.features import extract_split, feature_dir, load_features
 
 N_IMAGES = 10
 CHUNK = 4  # 3 morceaux : 4 + 4 + 2
@@ -44,9 +43,9 @@ def setup(tmp_path):
         Image.new("RGB", (178, 218), color=(10 * i, 20, 30)).save(src / n)
     models = {"a": Fake(1.0), "b": Fake(2.0)}
     transforms = {8: _tf(8), 16: _tf(16)}
-    kw = dict(names=names, source=src, models=models, transforms=transforms,
-              out_root=tmp_path / "feat", chunk_size=CHUNK, batch_size=3,
-              num_workers=0, device="cpu", log=lambda s: None)
+    kw = {"names": names, "source": src, "models": models, "transforms": transforms,
+              "out_root": tmp_path / "feat", "chunk_size": CHUNK, "batch_size": 3,
+              "num_workers": 0, "device": "cpu", "log": lambda s: None}
     return kw
 
 
